@@ -8,10 +8,13 @@
 #include "SFML\Graphics.hpp"
 #include "Input.h"
 
+	enum class CollisionLayer{NONE, ENEMY, PLAYER, SWORD, PROJECTILE, PLATFORM, GROUND, WALL }; 
+
 class GameObject : public sf::RectangleShape
 {
 public:
 	GameObject();
+	GameObject(CollisionLayer layer);
 	~GameObject();
 	
 	// Virtual update function. Base function does nothing (for static objects). Inheritted version will most likely override this function.
@@ -42,9 +45,7 @@ public:
 	
 
 protected:
-	enum class CollisionLayer{NONE, ENEMY, PLAYER, SWORD, PROJECTILE, PLATFORM }; 
 
-	CollisionLayer collision_layer = CollisionLayer::NONE;
 	// Sprite properties
 	sf::Vector2f velocity;
 	bool alive;
@@ -59,6 +60,7 @@ protected:
 	
 public:
 	//Data
+	CollisionLayer collision_layer = CollisionLayer::NONE;
 	static std::vector<GameObject*>all_gameObjects;
 
 };

@@ -6,13 +6,22 @@ GameObject::GameObject()
 {
 	input = nullptr;
 	all_gameObjects.push_back(this);
-	std::cout << this << " created " << std::endl;
+	//std::cout << this << " created " << std::endl;
+
+}
+
+GameObject::GameObject(CollisionLayer layer)
+{
+	input = nullptr;
+	all_gameObjects.push_back(this);
+	collision_layer = layer;
+	//std::cout << this << " created " << std::endl;
 
 }
 
 GameObject::~GameObject()
 {
-	std::cout << this << " destroyed " << std::endl;
+	//std::cout << this << " destroyed " << std::endl;
 }
 
 // Override this function to provide input handling for the derived class
