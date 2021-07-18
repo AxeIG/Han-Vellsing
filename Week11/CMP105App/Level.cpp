@@ -1,7 +1,7 @@
 #include "Level.h"
 
-sf::View* Level::view = nullptr;
-Level::Level(sf::RenderWindow* hwnd, Input* in, GameState* gs, AudioManager* aud)
+//sf::View* Level::view = nullptr;
+Level::Level(sf::RenderWindow* hwnd, Input* in, GameState* gs, AudioManager* aud) :BaseLevel()
 {
 	window = hwnd;
 	input = in;
@@ -10,7 +10,7 @@ Level::Level(sf::RenderWindow* hwnd, Input* in, GameState* gs, AudioManager* aud
 
 	GameObject::all_gameObjects.size();
 	// initialise game objects
-	
+	view = window->getView();
 	audio->addMusic("sfx/cantina.ogg", "cantina");
 	audio->addMusic("sfx/Credits.ogg", "credits");
 	world_map = map.getLevel();
@@ -62,6 +62,7 @@ void Level::handleInput(float dt)
 // Update game objects
 void Level::update(float dt)
 {
+
 	for (int i = 0; i < GameObject::all_gameObjects.size() - 1; ++i) {
 		//std::cout << GameObject::all_gameObjects[i] << std::endl;
 	}
@@ -95,8 +96,8 @@ void Level::update(float dt)
 		//std::cout << "WHOWHOWHOHWOHWOHWOHWOHOWHWO";
 	}
 
-	view->setCenter(player.getPosition().x, view->getCenter().y);
-	window->setView(*view);
+	view.setCenter(player.getPosition().x, view.getCenter().y);
+	window->setView(view);
 
 }
 

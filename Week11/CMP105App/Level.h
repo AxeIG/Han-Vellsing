@@ -23,14 +23,17 @@ public:
 	void update(float dt) override;
 	void render();
 
+
 private:
 	// Default variables for level class.
 
 	Player player;
 	sf::RectangleShape player_box/*, sword_box*/, box_box;
+	sf::View view;
 	GameObject wall1 = GameObject();
 	Collision collision;
 	Map map;
 	std::vector<GameObject>* world_map;
+
 	 
 };

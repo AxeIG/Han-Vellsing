@@ -5,6 +5,7 @@
 
 #pragma once
 #include <vector>
+#include"SFML/Graphics.hpp"
 
 class Input
 {
@@ -36,6 +37,7 @@ public:
 	void setMousePosition(int lx, int ly);
 	int getMouseX();
 	int getMouseY();
+	sf::Vector2i getMouse();
 	void setLeftMouse(MouseState state);
 	bool isLeftMouseDown();
 	bool isLeftMousePressed();

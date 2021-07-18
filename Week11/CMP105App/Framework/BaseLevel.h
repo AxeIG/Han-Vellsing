@@ -17,7 +17,8 @@ public:
 	virtual void update(float dt) = 0;
 	virtual void render() = 0;
 
-	static sf::View* view;
+	//static sf::View* view;
+	static sf::Vector2f global_mouse_pos;
 protected:
 	// Default functions for rendering to the screen.
 	void beginDraw();

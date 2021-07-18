@@ -7,6 +7,7 @@ Input::Input()
 	mouse.right = MouseState::UP;
 	mouse.x = 0;
 	mouse.y = 0;
+
 }
 
 void Input::setKeyDown(int key)
@@ -87,6 +88,10 @@ int Input::getMouseX()
 int Input::getMouseY()
 {
 	return mouse.y;
+}
+
+sf::Vector2i Input::getMouse() {
+	return sf::Vector2i(mouse.x, mouse.y);
 }
 
 void Input::setLeftMouse(MouseState state)
