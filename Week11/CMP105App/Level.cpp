@@ -1,5 +1,6 @@
 #include "Level.h"
 
+sf::View* Level::view = nullptr;
 Level::Level(sf::RenderWindow* hwnd, Input* in, GameState* gs, AudioManager* aud)
 {
 	window = hwnd;
@@ -9,7 +10,7 @@ Level::Level(sf::RenderWindow* hwnd, Input* in, GameState* gs, AudioManager* aud
 
 	GameObject::all_gameObjects.size();
 	// initialise game objects
-
+	
 	audio->addMusic("sfx/cantina.ogg", "cantina");
 	audio->addMusic("sfx/Credits.ogg", "credits");
 	world_map = map.getLevel();
@@ -35,7 +36,7 @@ Level::Level(sf::RenderWindow* hwnd, Input* in, GameState* gs, AudioManager* aud
 	box_box.setPosition(wall1.getCollisionBox().left, wall1.getCollisionBox().top);
 	box_box.setFillColor(sf::Color::Green);
 
-	view = window->getView();
+	
 
 }
 
@@ -48,6 +49,14 @@ Level::~Level()
 void Level::handleInput(float dt)
 {
 	player.handleInput(dt);
+	if (input->isKeyDown(sf::Keyboard::Escape)) {
+		gameState->setCurrentState(State::PAUSE_MENU);
+		input->setKeyUp(sf::Keyboard::Escape);
+
+	}
+	else if (input->isKeyDown(sf::Keyboard::F)) {
+		gameState->setCurrentState(State::BOSS_LEVEL);
+	}
 }
 
 // Update game objects
@@ -70,8 +79,8 @@ void Level::update(float dt)
 			if (Collision::checkBoundingBox(GameObject::all_gameObjects[i], GameObject::all_gameObjects[j])) {
 
 				//std::cout << "COLLIDED" << std::endl;
-				GameObject::all_gameObjects[i]->collisionResponse(GameObject::all_gameObjects[j]);
-				GameObject::all_gameObjects[j]->collisionResponse(GameObject::all_gameObjects[i]);
+				/*GameObject::all_gameObjects[i]->collisionResponse(GameObject::all_gameObjects[j]);
+				GameObject::all_gameObjects[j]->collisionResponse(GameObject::all_gameObjects[i]);*/
 			}
 		}
 	}
@@ -86,8 +95,8 @@ void Level::update(float dt)
 		//std::cout << "WHOWHOWHOHWOHWOHWOHWOHOWHWO";
 	}
 
-	view.setCenter(player.getPosition().x, view.getCenter().y);
-	window->setView(view);
+	view->setCenter(player.getPosition().x, view->getCenter().y);
+	window->setView(*view);
 
 }
 

@@ -30,7 +30,6 @@ private:
 	sf::RectangleShape player_box/*, sword_box*/, box_box;
 	GameObject wall1 = GameObject();
 	Collision collision;
-	sf::View view;
 	Map map;
 	std::vector<GameObject>* world_map;
 	 
