@@ -1,6 +1,6 @@
-#include "Menu.h"
+#include "PauseMenu.h"
 
-Menu::Menu(sf::RenderWindow* hwnd, Input* in, GameState* gs, AudioManager* aud):
+PauseMenu::PauseMenu(sf::RenderWindow* hwnd, Input* in, GameState* gs, AudioManager* aud):
 	BaseLevel()
 {
 	window = hwnd;
@@ -22,51 +22,46 @@ Menu::Menu(sf::RenderWindow* hwnd, Input* in, GameState* gs, AudioManager* aud):
 	resume_button.setCollider(true);
 	resume_button.setCollisionBox(0, 0, resume_button.getSize().x, resume_button.getSize().y);
 	
+
+
 	
 }
 
-Menu::~Menu() {
+PauseMenu::~PauseMenu() {
 
 }
 
-void Menu::handleInput(float dt) {
+void PauseMenu::handleInput(float dt) {
 
 	if (input->isKeyDown(sf::Keyboard::Escape)) {
 		gameState->setCurrentState(State::LEVEL);
 		input->setKeyUp(sf::Keyboard::Escape);
 	}
+
+	if(input->isLeftMouseDown()) {
+
+		if (Collision::checkBoundingBox(&exit_button, static_cast<sf::Vector2i>(global_mouse_pos))) {
+			window->close();
+		}
+		if (Collision::checkBoundingBox(&resume_button, static_cast<sf::Vector2i>(global_mouse_pos))) {
+			gameState->setCurrentState(State::LEVEL);
+		}
+	}
 }
 
 
-
-void Menu::update(float dt) {
+void PauseMenu::update(float dt) {
 	
-	if (input->isLeftMouseDown()) {
-
-		if (Collision::checkBoundingBox(&exit_button, static_cast<sf::Vector2i>(global_mouse_pos))) {
-				window->close();
-			std::cout << "EXIT " << std::endl;
-		}
-		if (Collision::checkBoundingBox(&resume_button, static_cast<sf::Vector2i>(global_mouse_pos))) {
-			std::cout << "RESUME " << std::endl;
-				gameState->setCurrentState(State::LEVEL);
-		}
-	}
 
 	resume_button.setPosition(window->getView().getCenter().x - resume_button.getSize().x / 2, resume_button.getPosition().y);
 	exit_button.setPosition(window->getView().getCenter().x - exit_button.getSize().x / 2, exit_button.getPosition().y);
-	/*std::cout << "Position: " << exit_button.getPosition().x<<std::endl;
-	sf::FloatRect collBox = exit_button.getCollisionBox();
-	std::cout << "Coll Box: " << collBox.left << " " << collBox.width << std::endl;
-	std::cout << "Mouse pos: " << input->getMouseX() << " " << input->getMouseY() << std::endl;
-	std::cout << "Global Mouse pos: " << global_mouse_pos.x<< " " << global_mouse_pos.y << std::endl;*/
+	
 
 }
 
 
-void Menu::render() {
+void PauseMenu::render() {
 
-	//beginDraw();
 	window->draw(exit_button);
 	window->draw(resume_button);
 	endDraw();

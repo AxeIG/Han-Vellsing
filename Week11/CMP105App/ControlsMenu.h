@@ -8,17 +8,19 @@
 #include <iostream>
 
 
-class Menu :
+class ControlsMenu :
 	public BaseLevel
 {
 public:
-	Menu(sf::RenderWindow* hwnd, Input* in, GameState* gs, AudioManager* aud);
-	~Menu();
+
+	ControlsMenu(sf::RenderWindow* hwnd, Input* in, GameState* gs, AudioManager* aud);
+	~ControlsMenu();
 
 	void handleInput(float dt) override;
 	void update(float dt) override;
 	void render() override;
 
 private:
-	GameObject exit_button, resume_button;
+	GameObject exit_button, background;
+	sf::Texture exit_texture, background_texture;
 };

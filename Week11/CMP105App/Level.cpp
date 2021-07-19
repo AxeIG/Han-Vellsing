@@ -57,6 +57,10 @@ void Level::handleInput(float dt)
 	else if (input->isKeyDown(sf::Keyboard::F)) {
 		gameState->setCurrentState(State::BOSS_LEVEL);
 	}
+	if (input->isKeyDown(sf::Keyboard::F)) {
+
+		gameState->setCurrentState(State::MAIN_MENU);
+	}
 }
 
 // Update game objects
@@ -112,7 +116,6 @@ void Level::render()
 	window->draw(player_box); 
 	//window->draw(sword_box);
 	window->draw(player.player_sprite);
-	
 	map.render(window);
 	endDraw();
 }
