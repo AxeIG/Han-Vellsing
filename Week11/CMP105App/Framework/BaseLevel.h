@@ -7,6 +7,7 @@
 #include <string>
 #include <iostream>
 
+enum class LevelName{NONE,LEVEL1, BOSS_LEVEL};
 class BaseLevel
 {
 public:
@@ -17,7 +18,7 @@ public:
 	virtual void update(float dt) = 0;
 	virtual void render() = 0;
 
-	//static sf::View* view;
+	LevelName level_name = LevelName::NONE;
 	static sf::Vector2f global_mouse_pos;
 protected:
 	// Default functions for rendering to the screen.

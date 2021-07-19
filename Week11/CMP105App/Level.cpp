@@ -9,6 +9,7 @@ Level::Level(sf::RenderWindow* hwnd, Input* in, GameState* gs, AudioManager* aud
 	audio = aud;
 
 	GameObject::all_gameObjects.size();
+	level_name = LevelName::LEVEL1;
 	// initialise game objects
 	view = window->getView();
 	audio->addMusic("sfx/cantina.ogg", "cantina");
@@ -90,6 +91,7 @@ void Level::update(float dt)
 		}
 	}
 
+
 	player_box.setPosition(player.getCollisionBox().left, player.getCollisionBox().top);
 	//sword_box.setPosition(player.getSword().left, player.getSword().top);
 	player.update(dt);
@@ -108,7 +110,6 @@ void Level::update(float dt)
 // Render level
 void Level::render()
 {
-
 	beginDraw();
 	window->draw(wall1);
 	window->draw(box_box);
