@@ -8,136 +8,157 @@
 #define JATTK_WIDTH 84
 #define JUMP_WIDTH 61
 #define WALK_WIDTH 66
-
+#define PLAYER_HEIGHT 32
+#define MAX_JUMP_HEIGHT 128
 
 Player::Player() : GameObject() {
 	
+	setPosition(0, 0);
+	initialisePlayer();
+}
+
+Player::Player(float x, float y) {
+
+	initialisePlayer();
+	setPosition(x, y);
+	
+}
+
+void Player::initialisePlayer() {
+
+	jump_start_position = getPosition();
+	previous_position = getPosition();
 	collision_layer = CollisionLayer::PLAYER;
 	clock.restart();
 	cooldown = clock.getElapsedTime();//Variable used for managing Skills and Jump Cooldown
 	health = 100; //Variable representing the player's health
-	landing = false;//Landing state
+	landed = false;//Landing state
+	falling = false;
 	attacking = false;
 
 	//Setting the Player's collision box and characteristics
-	setSize(sf::Vector2f(25, -40));
-	setOrigin(getSize().x/2, 0.0f);
+	setSize(sf::Vector2f(20, -40));
+	setOrigin(getSize().x / 2, 0.0f);
 	setCollisionBox(0, 0, getSize().x, getSize().y);
 	setCollider(true);
 	//initialise physics variables
-	velocity = sf::Vector2f(0, 0);
-	step_velocity = sf::Vector2f(0, 0);
-	scale = 100.0f;
-	gravity = sf::Vector2f(0, 9.8) * scale;
+	velocity = sf::Vector2f(0, 0) * physics_scale;
+	gravity = sf::Vector2f(0, 9.8) * physics_scale;
 
 	//Settling the sword's collision box
 	//sword.setCollisionBox(getCollisionBox().left + getCollisionBox().width, getCollisionBox().top, SWORD_WIDTH, getSize().y);
 
 	//Loading player spritesheet
 	texture.loadFromFile("gfx/herospritesheet.png");
-	player_sprite.setTexture(&texture);	
-	
+	player_sprite.setTexture(&texture);
+
 
 	initialiseAnimations();
-	current_animation=& idle;
+	current_animation = &idle;
 	AssignAnimation(idle, true);
 	player_sprite.setTextureRect(current_animation->getCurrentFrame());
-
-	
-
 }
 
 Player::~Player() {
 
 }
 
-void Player::setHealth(int health) {
 
-	this->health = health;
-}
+#define MOVE_FORCE speed * physics_scale
+#define JUMP_FORCE -speed * physics_scale
+#define JUMP_FORCE_HOLD -9.8f * physics_scale // Cancel gravity
 
-int Player::getHealth() {
+void Player::OnStartOfFrame() {
 
-	return health;
+	//direction = sf::Vector2f(0.f, 0.f);
 
+	if ((falling)&&(velocity.y == 0)) {
+
+		falling = false;
+		landed = true;
+	}
+	else if ((landed) && (velocity.y < 0)) {
+
+		landed = false;
+		falling = false;
+	}
+	else if ((landed) && (velocity.y > 0)) {
+		
+		std::cout << "Error! Landed Fall" << std::endl;
+	}
+	else if ((!falling) && (!landed) && (velocity.y >= 0)) {
+		landed = false;
+		falling = true;
+	}
+	else if ((landed) && (falling)) {
+
+		std::cout << "Error! Landed and Falling" << std::endl;
+	}
+
+	velocity.x = 0;
+	jump_hold_acceleration.y = 0;
+	previous_position = getPosition();
 }
 
 void Player::handleInput(float dt) {//Handles Player Inputs by applying force to the character based on the pressed key
 
 	//When The "W" key is pressed the player will start jumping
-	if ((input->isKeyDown(sf::Keyboard::W)) && (!landing)) {
-		Jump(dt);
-		if (current_animation != &jump_attack) { AssignAnimation(jump, false); }
-		//setSize(sf::Vector2f(135, 100));
-	}
+	if ((input->isKeyDown(sf::Keyboard::W)) && (!falling)) {
 
-	//Once the character reaches it's max vertical velocity or the "W" key is removed it will enter a landing state
-	else if (((!input->isKeyDown(sf::Keyboard::W)) && (velocity.y != 0)) || (velocity.y == -600)) {
+		if (landed) {
+			velocity.y = JUMP_FORCE;
+			jump_start_position = getPosition();
+		}
+		else if (abs(jump_start_position.y - getPosition().y) <= MAX_JUMP_HEIGHT) 
+		{
+			jump_hold_acceleration.y = JUMP_FORCE_HOLD;
+		}
 		
-	landing = true; 
-
-	if (current_animation != &jump_attack) { AssignAnimation(jump, false); }
-	}
-
-	if (input->isKeyDown(sf::Keyboard::Enter)) {
-
-		if (velocity.y != 0) {
-			AssignAnimation(jump_attack, false);
-		}
-		else { 
-			AssignAnimation(attack, false); 
-		//setSize(sf::Vector2f(153, 75));
-		}
-
 	}
 
 	//Managing vertical movement based on key input
 	if (input->isKeyDown(sf::Keyboard::D)) {
 
-		velocity.x= 250;
-		if (velocity.y==0) {
-			AssignAnimation(walk, true);
-			//setSize(sf::Vector2f(87, 70));
-		}
+		velocity.x += MOVE_FORCE;
 
 	}
-	else if (input->isKeyDown(sf::Keyboard::A)) {
+	if (input->isKeyDown(sf::Keyboard::A)) {
 
-		velocity.x = -250;
-		if (velocity.y == 0) { 
-			AssignAnimation(walk, true);
-			//setSize(sf::Vector2f(87, 70));
-		}
-
+		velocity.x -= MOVE_FORCE;
 	}
-	else { //If the Player is in a statonary state it will switch to an Idle animation
 
-		if ((velocity.y == 0)&&(current_animation!=&attack)) {
 
-			AssignAnimation(idle, true);
-			//setSize(sf::Vector2f(60, 70));
-		}
-		velocity.x = 0;
-	}
 }
-
 
 void Player::update(float dt) {
 
 	//Animates current animation
 	current_animation->animate(dt);
-	
-	//Simulates gravity
-	if (getPosition().y <= 600) {
-		step_velocity += gravity * dt;
-		setPosition(getPosition() + step_velocity * dt);
-	}
-	else if (landing) {
 
-		AssignAnimation(idle, true);
-		step_velocity.y = velocity.y = 0;
-		landing = false;
+	/*if (landing) {
+		std::cout << "LANDING" << std::endl;
 	}
+	else { std::cout << "NOT" << std::endl; }*/
+
+	//std::cout << velocity.y << " " << acceleration.y <<std::endl;
+
+	sf::Vector2f offset = velocity*dt + 0.5f * (gravity + jump_hold_acceleration)*dt*dt;
+	velocity += (gravity + jump_hold_acceleration)* dt;
+	setPosition(getPosition() + offset);
+
+
+	//Simulates gravity
+	if (getPosition().y >= 0) {
+		setPosition(getPosition().x, 0); 
+		velocity.y = 0.0f;
+		//acceleration.y = 0.0f;
+	}
+	if (getPosition().x < 0) {
+		setPosition(0, getPosition().y);
+		velocity.x = 0.0f;
+		//acceleration.y = 0.0f;
+	}
+	std::cout << "Offset.X" << offset.x << " " << "Offset.Y" << offset.y << std::endl;
 
 	//Applies vertical and horizontal forces to the character
 	if (velocity != sf::Vector2f(0, 0)) {
@@ -155,20 +176,22 @@ void Player::update(float dt) {
 	int new_y_position = getPosition().y - player_sprite.getSize().y;
 	player_sprite.setPosition(new_x_position, new_y_position);
 	player_sprite.setTextureRect(current_animation->getCurrentFrame());
-
 }
 
+void Player::collisionResponse(GameObject* gameobject) {
 
+	/*if (gameobject->collision_layer == CollisionLayer::PLATFORM) {
+
+		if()
+		if(previous_position().x)
+	}*/
+}
 
 void Player::Jump(float dt) { //Simluates the character's jump
 
-	if (velocity.y == 0) { velocity.y = -100; }
-	//The longer the player presses "W", the higher the character goes
-	if ((input->isKeyDown(sf::Keyboard::W)) && (velocity.y >= -600)) {
-
-		--velocity.y;
-	}
+	
 }
+
 
 void Player::AssignAnimation(Animation& animation, bool looping) {
 
@@ -179,17 +202,12 @@ void Player::AssignAnimation(Animation& animation, bool looping) {
 		current_animation->setLooping(looping);
 		current_animation->setPlaying(true);
 
-
 		sf::IntRect frame_rectangle = current_animation->getCurrentFrame();
 		player_sprite.setSize(sf::Vector2f(abs(frame_rectangle.width), abs(frame_rectangle.height)));
-		
 	}
 
    //Flipping the character based on his non-zero horizontal velocity or else it keeps the previous flip state
 	current_animation->setFlipped((velocity.x < 0 && velocity.x!=0) || (velocity.x==0 && is_flipped ));
-
-	
-
 }
 
 
@@ -263,5 +281,16 @@ void Player::initialiseAnimations() {
 
 
 }
+void Player::setHealth(int health) {
+
+	this->health = health;
+}
+
+int Player::getHealth() {
+
+	return health;
+
+}
+
 
 

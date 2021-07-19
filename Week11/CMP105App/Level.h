@@ -27,10 +27,11 @@ public:
 private:
 	// Default variables for level class.
 
-	Player player;
-	sf::RectangleShape player_box/*, sword_box*/, box_box;
+	Player* player;
+	sf::RectangleShape player_box/*, sword_box*/;
 	sf::View view;
 	GameObject wall1 = GameObject();
+	GameObject ground_axis = GameObject();
 	Collision collision;
 	Map map;
 	std::vector<GameObject>* world_map;

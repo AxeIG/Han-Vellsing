@@ -8,6 +8,8 @@ Level::Level(sf::RenderWindow* hwnd, Input* in, GameState* gs, AudioManager* aud
 	gameState = gs;
 	audio = aud;
 
+	player =new Player(100, -100);
+
 	GameObject::all_gameObjects.size();
 	level_name = LevelName::LEVEL1;
 	// initialise game objects
@@ -15,27 +17,29 @@ Level::Level(sf::RenderWindow* hwnd, Input* in, GameState* gs, AudioManager* aud
 	audio->addMusic("sfx/cantina.ogg", "cantina");
 	audio->addMusic("sfx/Credits.ogg", "credits");
 	world_map = map.getLevel();
-	player.setInput(input);
+	player->setInput(input);
 
 	//collision boxes checkup
 
-	
+	wall1.setSize(sf::Vector2f(2, 1000));
+	wall1.setOrigin(1, 500);
+	wall1.setPosition(0, 0);
+	wall1.setCollisionBox(0, 0, 0, 0);
+	wall1.setCollider(false);
+	wall1.setFillColor(sf::Color::Yellow);
 
-	wall1.setSize(sf::Vector2f(100, 100));
-	wall1.setFillColor(sf::Color::Magenta);
-	wall1.setPosition(1200, 550);
-	wall1.setCollisionBox(0, 0, 100, 100);
-	wall1.setCollider(true);
-
-	player_box.setSize(sf::Vector2f(player.getCollisionBox().width, player.getCollisionBox().height));
+	player_box.setSize(sf::Vector2f(player->getCollisionBox().width, player->getCollisionBox().height));
 	player_box.setFillColor(sf::Color::Red);
 
 	//sword_box.setSize(sf::Vector2f(player.getSword().width, player.getSword().height));
 	//sword_box.setFillColor(sf::Color::Blue);
 
-	box_box.setSize(sf::Vector2f(wall1.getCollisionBox().width, wall1.getCollisionBox().height));
-	box_box.setPosition(wall1.getCollisionBox().left, wall1.getCollisionBox().top);
-	box_box.setFillColor(sf::Color::Green);
+	ground_axis.setSize(sf::Vector2f(1200, 2));
+	ground_axis.setOrigin(600,1);
+	ground_axis.setPosition(0,0);
+	ground_axis.setCollisionBox(0, 0, 0, 0);
+	ground_axis.setFillColor(sf::Color::Yellow);
+	ground_axis.setCollider(false);
 
 	
 
@@ -49,7 +53,7 @@ Level::~Level()
 // handle user input
 void Level::handleInput(float dt)
 {
-	player.handleInput(dt);
+	player->handleInput(dt);
 	if (input->isKeyDown(sf::Keyboard::Escape)) {
 		gameState->setCurrentState(State::PAUSE_MENU);
 		input->setKeyUp(sf::Keyboard::Escape);
@@ -92,18 +96,20 @@ void Level::update(float dt)
 	}
 
 
-	player_box.setPosition(player.getCollisionBox().left, player.getCollisionBox().top);
+	player_box.setPosition(player->getCollisionBox().left, player->getCollisionBox().top);
 	//sword_box.setPosition(player.getSword().left, player.getSword().top);
-	player.update(dt);
+
+	player->update(dt);
 
 	//player.setPosition(window->getSize().x/2, window->getSize().y / 2);
 
-	if (collision.checkBoundingBox(&player,&wall1)) {
+	if (collision.checkBoundingBox(player,&wall1)) {
 		//std::cout << "WHOWHOWHOHWOHWOHWOHWOHOWHWO";
 	}
 
-	view.setCenter(player.getPosition().x, view.getCenter().y);
+	view.setCenter(player->getPosition().x, player->getPosition().y);
 	window->setView(view);
+
 
 }
 
@@ -112,12 +118,15 @@ void Level::render()
 {
 	beginDraw();
 	window->draw(wall1);
-	window->draw(box_box);
-	window->draw(player);
+	window->draw(ground_axis);
+	window->draw((*player));
 	window->draw(player_box); 
 	//window->draw(sword_box);
-	window->draw(player.player_sprite);
+	window->draw(player->player_sprite);
 	map.render(window);
 	endDraw();
+	player->OnStartOfFrame();
+	
+
 }
 
