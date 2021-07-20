@@ -35,10 +35,10 @@ Map::Map() {
 	for (int i = 0; i < 2; i++)
 	{
 		for (int j = 0; j < 3; j++) {
-			tile = GameObject(CollisionLayer::GROUND);
+			tile = GameObject(CollisionLayer::WALL);
 			tile.setSize(sf::Vector2f(TILE_SIZE, TILE_SIZE));
 			tile.setCollisionBox(0, 0, TILE_SIZE, TILE_SIZE);
-			tile.setCollider(false);
+			tile.setCollider(true);
 			tile.setTextureRect(sf::IntRect(32 + j * CUT_SIZE, 64 + i * CUT_SIZE, CUT_SIZE, CUT_SIZE));
 			tileSet.push_back(tile);
 		}
@@ -48,10 +48,10 @@ Map::Map() {
 	for (int i = 0; i < 2; i++)
 	{
 		for (int j = 0; j < 3; j++) {
-			tile = GameObject(CollisionLayer::GROUND);
+			tile = GameObject(CollisionLayer::WALL);
 			tile.setSize(sf::Vector2f(TILE_SIZE, TILE_SIZE));
 			tile.setCollisionBox(0, 0, TILE_SIZE, TILE_SIZE);
-			tile.setCollider(false);
+			tile.setCollider(true);
 			tile.setTextureRect(sf::IntRect(384 + j * CUT_SIZE, 128 + i * CUT_SIZE, CUT_SIZE, CUT_SIZE));
 			tileSet.push_back(tile);
 		}
@@ -75,11 +75,11 @@ Map::Map() {
 	mapDimensions = sf::Vector2u(11, 5);
 
 	tileMap = { 0, 0, 0, 0, 0,12, 13, 14, 0, 0, 0,
-			  0, 0, 0, 0, 0, 15, 16, 17, 0, 0, 0,
-			  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-			  0, 0, 1, 2, 3, 4, 5, 0, 0, 18, 19,
-			  0, 0, 0, 0, 0, 0, 0, 0, 0, 20, 21,
-			  0, 0 ,0 ,0 ,0, 0, 0, 0, 0, 22, 23
+			  0, 0, 0, 0, 0, 15, 16, 17, 0, 18, 19,
+			  0, 0, 1, 2, 3, 4, 5, 0, 0, 20, 21,
+			  0, 0, 0, 0, 0, 0, 0, 0, 0, 22, 23,
+			  0, 0 ,0 ,0 ,0, 0, 0, 0, 0, 0, 0,
+				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	};
 
 	

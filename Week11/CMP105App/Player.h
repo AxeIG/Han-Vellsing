@@ -52,7 +52,7 @@ private:
 	const float speed = 5.f;
 
 	// Physics simulations
-	const float physics_scale = 25.f;
+	const float physics_scale = 20.f;
 
 public :
 

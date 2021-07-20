@@ -38,7 +38,7 @@ void Player::initialisePlayer() {
 
 	//Setting the Player's collision box and characteristics
 	setSize(sf::Vector2f(20, 40));
-	setOrigin(getSize().x / 2, getSize().y);
+	setOrigin(0,0);
 	setCollisionBox(0, 0, getSize().x, getSize().y);
 	setCollider(true);
 	//initialise physics variables
@@ -97,7 +97,9 @@ void Player::OnStartOfFrame() {
 
 	velocity.x = 0;
 	jump_hold_acceleration.y = 0;
+
 	previous_position = getPosition();
+	
 }
 
 void Player::handleInput(float dt) {//Handles Player Inputs by applying force to the character based on the pressed key
@@ -148,13 +150,13 @@ void Player::update(float dt) {
 
 
 	//Simulates gravity
-	if (getPosition().y >= 0) {
-		setPosition(getPosition().x, 0); 
+	if (getPosition().y + getSize().y >= 0) {
+		setPosition(getPosition().x, -getSize().y); 
 		velocity.y = 0.0f;
 		//acceleration.y = 0.0f;
 	}
-	if (getPosition().x < 0) {
-		setPosition(0, getPosition().y);
+	if (getPosition().x + getSize().x / 2 < 0) {
+		setPosition(-getSize().x/2, getPosition().y);
 		velocity.x = 0.0f;
 		//acceleration.y = 0.0f;
 	}
@@ -176,25 +178,80 @@ void Player::update(float dt) {
 	int new_y_position = getPosition().y - player_sprite.getSize().y;
 	player_sprite.setPosition(new_x_position, new_y_position);
 	player_sprite.setTextureRect(current_animation->getCurrentFrame());
+
+	
 }
 
 void Player::collisionResponse(GameObject* gameobject) {
 
-	//Dependend on player origin being at bottom mid
+	sf::Vector2f collider_pos = gameobject->getPosition();
+	sf::Vector2f  collider_size = sf::Vector2f(gameobject->getCollisionBox().width, gameobject->getCollisionBox().height);
+	float  collider_right_point_Xpos = (collider_pos.x + collider_size.x);
+	float bottom_middle = previous_position.x + getSize().x / 2;
+
+	//Platform collsiion
 	if (gameobject->collision_layer == CollisionLayer::PLATFORM) {
 
-		sf::Vector2f collider_pos = gameobject->getPosition();
-		float  collider_size = gameobject->getCollisionBox().width;
-		float  collider_right_point_Xpos = (collider_pos.x + collider_size);
-
+		
+		
+		//check if on top
 		//Dependend on platform origin point being 0,0 (top_left corner)
-		if (previous_position.y > collider_pos.y) {
+		if (previous_position.y + getSize().y <= collider_pos.y) {
 
-			if ((previous_position.x >= collider_pos.x)&&(previous_position.x <= collider_right_point_Xpos)) {
+			if ((bottom_middle >= collider_pos.x) && (bottom_middle <= collider_right_point_Xpos)) {
 				velocity.y = 0;
-				setPosition(getPosition().x, collider_pos.y);
+				setPosition(getPosition().x, collider_pos.y - getSize().y);
+				//std::cout << getPosition().y << " " << previous_position.y << std::endl;
+				if (abs(previous_position.y - getPosition().y) > 10) {
+
+					std::cout << "I HAVE TELEPORTED";
+				}
 			}
 		}
+	}
+	//Wall collision
+	else if (gameobject->collision_layer == CollisionLayer::WALL) {
+
+		
+		
+		//Check player top
+		if(previous_position.y >= collider_pos.y+collider_size.y) {
+
+			if ((previous_position.x + getSize().x > collider_pos.x) && (previous_position.x < collider_right_point_Xpos)) {
+
+					velocity.y = 0;
+					setPosition(getPosition().x, collider_pos.y+collider_size.y);
+			}
+
+
+		}
+		//check player bottom
+		else if (previous_position.y + getSize().y <= collider_pos.y) {
+
+			if ((previous_position.x + getSize().x > collider_pos.x) && (previous_position.x < collider_right_point_Xpos)) {
+				velocity.y = 0;
+				setPosition(getPosition().x, collider_pos.y - getSize().y);
+				//	std::cout << getPosition().y << " " << previous_position.y << std::endl;
+				
+			}
+
+		}
+		//Check from left
+		else if ((previous_position.x + getSize().x >= collider_pos.x) && (velocity.x > 0)) {
+
+			velocity.x = 0;
+			setPosition(collider_pos.x - getSize().x, getPosition().y);
+
+		}
+		//Check from right
+		else if ((previous_position.x <= collider_pos.x + collider_size.x) && (velocity.x < 0)) {
+
+			velocity.x = 0;
+			setPosition(collider_pos.x+collider_size.x , getPosition().y);
+
+		}
+
+		
 	}
 }
 

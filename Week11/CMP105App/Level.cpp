@@ -8,7 +8,7 @@ Level::Level(sf::RenderWindow* hwnd, Input* in, GameState* gs, AudioManager* aud
 	gameState = gs;
 	audio = aud;
 
-	player =new Player(100, -100);
+	player =new Player(100, -200);
 
 	level_name = LevelName::LEVEL1;
 	// initialise game objects
@@ -72,21 +72,21 @@ void Level::update(float dt)
 {
 
 	player->update(dt);
-	player_box.setPosition(player->getCollisionBox().left, player->getCollisionBox().top);
 	//sword_box.setPosition(player.getSword().left, player.getSword().top);
 
-	std::cout << "//////////////////////////////////////////" << std::endl;
+	//std::cout << "//////////////////////////////////////////" << std::endl;
 	for (int i = 0; i < world_map->size(); i++)
 	{
 		if ((*world_map)[i].isCollider()) {
-			std::cout << "I CAN COLIDE : " << i << std::endl;
+			//std::cout << "I CAN COLIDE : " << i << std::endl;
 			if (Collision::checkBoundingBox(player, &(*world_map)[i])) {
 
-				std::cout << "I HAVE COLLIDED" << std::endl;
+				//std::cout << "I HAVE COLLIDED" << std::endl;
 				player->collisionResponse(&(*world_map)[i]);
 			}
 		}
 	}
+	player_box.setPosition(player->getCollisionBox().left, player->getCollisionBox().top);
 
 	//Collision Check for all GameObjects
 	/*for(int i = 0; i < GameObject::all_gameObjects.size()-1; ++i)
