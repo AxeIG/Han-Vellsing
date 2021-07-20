@@ -4,14 +4,7 @@
 // Check AABB for collision. Returns true if collision occurs.
 bool Collision::checkBoundingBox(GameObject* s1, GameObject* s2)
 {
-	if (s1->getPosition().x ==100 && s1->getPosition().y<96)
-	{
 	
-		std::cout << "End" << std::endl;
-		int a = 3;
-	}
-	sf::FloatRect colBox = s1->getCollisionBox();
-	sf::FloatRect colBox2=s2->getCollisionBox();
 
 	//std::cout << "UNO:" << s1->getCollisionBox().left << " " << s1->getCollisionBox().width << " " << s2->getCollisionBox().left << std::endl;
 	if (s1->getCollisionBox().left + s1->getCollisionBox().width < s2->getCollisionBox().left)

@@ -9,6 +9,7 @@
 #define JUMP_WIDTH 61
 #define WALK_WIDTH 66
 #define PLAYER_HEIGHT 32
+#define PLAYER_WIDTH 16
 #define MAX_JUMP_HEIGHT 128
 
 Player::Player() : GameObject() {
@@ -21,7 +22,6 @@ Player::Player(float x, float y) {
 
 	initialisePlayer();
 	setPosition(x, y);
-	
 }
 
 void Player::initialisePlayer() {
@@ -37,7 +37,7 @@ void Player::initialisePlayer() {
 	attacking = false;
 
 	//Setting the Player's collision box and characteristics
-	setSize(sf::Vector2f(20, 40));
+	setSize(sf::Vector2f(PLAYER_WIDTH, PLAYER_HEIGHT));
 	setOrigin(0,0);
 	setCollisionBox(0, 0, getSize().x, getSize().y);
 	setCollider(true);
@@ -64,8 +64,8 @@ Player::~Player() {
 }
 
 
-#define MOVE_FORCE speed * physics_scale
-#define JUMP_FORCE -speed * physics_scale
+#define MOVE_FORCE time_per_pixel * physics_scale
+#define JUMP_FORCE -time_per_pixel * physics_scale
 #define JUMP_FORCE_HOLD -9.8f * physics_scale // Cancel gravity
 
 void Player::OnStartOfFrame() {
@@ -84,7 +84,8 @@ void Player::OnStartOfFrame() {
 	}
 	else if ((landed) && (velocity.y > 0)) {
 		
-		std::cout << "Error! Landed Fall" << std::endl;
+		falling = true;
+		landed = false;
 	}
 	else if ((!falling) && (!landed) && (velocity.y >= 0)) {
 		landed = false;
@@ -104,8 +105,13 @@ void Player::OnStartOfFrame() {
 
 void Player::handleInput(float dt) {//Handles Player Inputs by applying force to the character based on the pressed key
 
+
+	if (input->isKeyDown(sf::Keyboard::Enter)) {
+
+		attacking = true;
+	}
 	//When The "W" key is pressed the player will start jumping
-	if ((input->isKeyDown(sf::Keyboard::W)) && (!falling)) {
+	if ((input->isKeyDown(sf::Keyboard::W)) && (!falling)&&(!attacking)) {
 
 		if (landed) {
 			velocity.y = JUMP_FORCE;
@@ -148,20 +154,6 @@ void Player::update(float dt) {
 	velocity += (gravity + jump_hold_acceleration)* dt;
 	setPosition(getPosition() + offset);
 
-
-	//Simulates gravity
-	if (getPosition().y + getSize().y >= 0) {
-		setPosition(getPosition().x, -getSize().y); 
-		velocity.y = 0.0f;
-		//acceleration.y = 0.0f;
-	}
-	if (getPosition().x + getSize().x / 2 < 0) {
-		setPosition(-getSize().x/2, getPosition().y);
-		velocity.x = 0.0f;
-		//acceleration.y = 0.0f;
-	}
-	//std::cout << "Offset.X" << offset.x << " " << "Offset.Y" << offset.y << std::endl;
-
 	//Applies vertical and horizontal forces to the character
 	if (velocity != sf::Vector2f(0, 0)) {
 		move(velocity.x * dt, velocity.y * dt);
@@ -173,12 +165,15 @@ void Player::update(float dt) {
 	}
 	else sword.setCollisionBox(getCollisionBox().left - SWORD_WIDTH, getCollisionBox().top, SWORD_WIDTH, -getSize().y);*/
 
+
+	handleAnimation();
 	//Depends on Animation being handled beforehand
-	int new_x_position = getPosition().x-player_sprite.getSize().x/2 ;
-	int new_y_position = getPosition().y - player_sprite.getSize().y;
+	int new_x_position = getPosition().x - player_sprite.getSize().x / 2 + getSize().x / 2;
+	int new_y_position = getPosition().y - player_sprite.getSize().y+ getSize().y;
 	player_sprite.setPosition(new_x_position, new_y_position);
 	player_sprite.setTextureRect(current_animation->getCurrentFrame());
 
+	
 	
 }
 
@@ -202,10 +197,7 @@ void Player::collisionResponse(GameObject* gameobject) {
 				velocity.y = 0;
 				setPosition(getPosition().x, collider_pos.y - getSize().y);
 				//std::cout << getPosition().y << " " << previous_position.y << std::endl;
-				if (abs(previous_position.y - getPosition().y) > 10) {
-
-					std::cout << "I HAVE TELEPORTED";
-				}
+				
 			}
 		}
 	}
@@ -246,8 +238,9 @@ void Player::collisionResponse(GameObject* gameobject) {
 		//Check from right
 		else if ((previous_position.x <= collider_pos.x + collider_size.x) && (velocity.x < 0)) {
 
-			velocity.x = 0;
+			velocity.x= 0;
 			setPosition(collider_pos.x+collider_size.x , getPosition().y);
+
 
 		}
 
@@ -278,6 +271,37 @@ void Player::AssignAnimation(Animation& animation, bool looping) {
 	current_animation->setFlipped((velocity.x < 0 && velocity.x!=0) || (velocity.x==0 && is_flipped ));
 }
 
+
+void Player::handleAnimation() {
+
+
+	if (attacking) {
+		
+		if (landed) {
+
+			if (!current_animation->getPlaying()) {
+				attacking = false;
+			}
+			AssignAnimation(attack, false);
+		}
+		else {
+			AssignAnimation(jump_attack, false);
+		}
+
+	}
+	else if ((landed) && (velocity.x != 0)) {
+
+		AssignAnimation(walk, true);
+	}
+	else if ((!landed) && (current_animation != &jump_attack)) {
+		AssignAnimation(jump, false);
+	}
+	else{
+		AssignAnimation(idle, true);
+	}
+
+
+}
 
 
 sf::FloatRect Player::getSword() {
@@ -333,7 +357,7 @@ void Player::initialiseAnimations() {
 	jump.setFrameSpeed(1.f / 11.f);
 
 	//Attack frames
-	attack.addFrame(sf::IntRect(0, 0, ATTACK_ANIM_WIDTH, ANIM_HEIGHT));
+	//attack.addFrame(sf::IntRect(0, 0, ATTACK_ANIM_WIDTH, ANIM_HEIGHT));
 	attack.addFrame(sf::IntRect(96, 0, ATTACK_ANIM_WIDTH, ANIM_HEIGHT));
 	attack.addFrame(sf::IntRect(192, 0, ATTACK_ANIM_WIDTH, ANIM_HEIGHT));
 	attack.addFrame(sf::IntRect(288, 0, ATTACK_ANIM_WIDTH, ANIM_HEIGHT));
@@ -342,7 +366,7 @@ void Player::initialiseAnimations() {
 	attack.setFrameSpeed(1.f / 10.f);
 
 	//Jump attack frames
-	jump_attack.addFrame(sf::IntRect(1536, 0, JATTK_WIDTH, ANIM_HEIGHT));
+	//jump_attack.addFrame(sf::IntRect(1536, 0, JATTK_WIDTH, ANIM_HEIGHT));
 	jump_attack.addFrame(sf::IntRect(1632, 0, JATTK_WIDTH, ANIM_HEIGHT));
 	jump_attack.addFrame(sf::IntRect(0, 65, JATTK_WIDTH, ANIM_HEIGHT));
 	jump_attack.setFrameSpeed(1.f / 6.f);

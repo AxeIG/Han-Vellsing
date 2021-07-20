@@ -10,6 +10,7 @@
 #include "Framework/Collision.h"
 
 #include"EntityManager.h"
+#include"Background.h"
 #include"Player.h"
 #include"Map.h"
 
@@ -35,6 +36,9 @@ private:
 	Collision collision;
 	Map map;
 	std::vector<GameObject>* world_map;
+	GameObject layer1, layer2;
+	sf::Texture layer1_texture, layer2_texture, background_texture;
+	Background* background;
 
 	 
 };

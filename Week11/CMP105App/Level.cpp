@@ -1,6 +1,7 @@
 #include "Level.h"
 
 //sf::View* Level::view = nullptr;
+
 Level::Level(sf::RenderWindow* hwnd, Input* in, GameState* gs, AudioManager* aud) :BaseLevel()
 {
 	window = hwnd;
@@ -8,40 +9,51 @@ Level::Level(sf::RenderWindow* hwnd, Input* in, GameState* gs, AudioManager* aud
 	gameState = gs;
 	audio = aud;
 
-	player =new Player(100, -200);
-
+	
 	level_name = LevelName::LEVEL1;
 	// initialise game objects
+	background = new Background("gfx/MegaBigCloud.png", 0.03f, 2048, 704, 1024);
+	background->setSize(sf::Vector2f(1200, 675));
+
+	//background->setPosition(70, -352);
+	
+
+
+	/*layer1.setSize(sf::Vector2f(512, 352));
+	layer1.setPosition(20, 0);
+	layer1_texture.loadFromFile("gfx/clouds.png");
+	layer1.setTexture(&layer1_texture);
+	layer1.setTextureRect(sf::IntRect(0, 0, 256, 176));*/
+
+
+	/*layer1_texture.loadFromFile("gfx/clouds.png");
+	layer1.setTexture(&layer1_texture);
+	layer1.setSize(sf::Vector2f(200, 200));
+	layer1.setPosition(0, -200);
+	layer1.setTextureRect(sf::IntRect(0, 0, 512, 176));*/
+
+	layer2_texture.loadFromFile("gfx/town.png");
+	layer2.setTexture(&layer2_texture);
+	layer2.setSize(sf::Vector2f(1200, 675));
+	layer2.setTextureRect(sf::IntRect(0,0,256,176));
+	layer2.setPosition(0,-675);
+	
+
 	view = window->getView();
 	audio->addMusic("sfx/cantina.ogg", "cantina");
 	audio->addMusic("sfx/Credits.ogg", "credits");
 	world_map = map.getLevel();
+
+
+	player =new Player(456, -250);
 	player->setInput(input);
 
 	//collision boxes checkup
-
-	wall1.setSize(sf::Vector2f(2, 1000));
-	wall1.setOrigin(1, 500);
-	wall1.setPosition(0, 0);
-	wall1.setCollisionBox(0, 0, 0, 0);
-	wall1.setCollider(false);
-	wall1.setFillColor(sf::Color::Yellow);
-
 	player_box.setSize(sf::Vector2f(player->getCollisionBox().width, player->getCollisionBox().height));
 	player_box.setFillColor(sf::Color::Red);
 
 	//sword_box.setSize(sf::Vector2f(player.getSword().width, player.getSword().height));
 	//sword_box.setFillColor(sf::Color::Blue);
-
-	ground_axis.setSize(sf::Vector2f(1200, 2));
-	ground_axis.setOrigin(600,1);
-	ground_axis.setPosition(0,0);
-	ground_axis.setCollisionBox(0, 0, 0, 0);
-	ground_axis.setFillColor(sf::Color::Yellow);
-	ground_axis.setCollider(false);
-
-	
-
 }
 
 Level::~Level()
@@ -52,6 +64,7 @@ Level::~Level()
 // handle user input
 void Level::handleInput(float dt)
 {
+
 	player->handleInput(dt);
 	if (input->isKeyDown(sf::Keyboard::Escape)) {
 		gameState->setCurrentState(State::PAUSE_MENU);
@@ -70,46 +83,35 @@ void Level::handleInput(float dt)
 // Update game objects
 void Level::update(float dt)
 {
-
+	
+	std::cout << background->getPosition().x << " " << background->getPosition().y;
+	background->updateTextureCoordinates(dt);
 	player->update(dt);
 	//sword_box.setPosition(player.getSword().left, player.getSword().top);
 
-	//std::cout << "//////////////////////////////////////////" << std::endl;
-	for (int i = 0; i < world_map->size(); i++)
-	{
+	for (int i = 0; i < world_map->size(); i++){
 		if ((*world_map)[i].isCollider()) {
-			//std::cout << "I CAN COLIDE : " << i << std::endl;
 			if (Collision::checkBoundingBox(player, &(*world_map)[i])) {
 
-				//std::cout << "I HAVE COLLIDED" << std::endl;
 				player->collisionResponse(&(*world_map)[i]);
 			}
 		}
 	}
 	player_box.setPosition(player->getCollisionBox().left, player->getCollisionBox().top);
 
-	//Collision Check for all GameObjects
-	/*for(int i = 0; i < GameObject::all_gameObjects.size()-1; ++i)
-	{
-		if (!GameObject::all_gameObjects[i]->isCollider()) continue;
 
-		for (int j = i + 1; j < GameObject::all_gameObjects.size(); ++j)
-		{
-			if (!GameObject::all_gameObjects[j]->isCollider()) continue;
-
-			if (Collision::checkBoundingBox(GameObject::all_gameObjects[i], GameObject::all_gameObjects[j])) {
-
-				std::cout << "COLLIDED" << std::endl;
-				GameObject::all_gameObjects[i]->collisionResponse(GameObject::all_gameObjects[j]);
-				GameObject::all_gameObjects[j]->collisionResponse(GameObject::all_gameObjects[i]);
-			}
-		}
-	}*/
-	
-
-	view.setCenter(player->getPosition().x, player->getPosition().y);
+	if (player->getPosition().x <= view.getSize().x/2) {
+		view.setCenter(view.getCenter().x, player->getPosition().y - 150);
+	}
+	else {
+		view.setCenter(player->getPosition().x, player->getPosition().y - 150);
+	}
 	window->setView(view);
+	background->setPosition(view.getCenter().x-view.getSize().x/2, view.getCenter().y-view.getSize().y/2);
+	layer2.setPosition(view.getCenter().x - view.getSize().x / 2, view.getCenter().y-layer2.getSize().y/2);
 	
+
+	//std::cout << player->getPosition().x << " " << player->getPosition().y << std::endl;
 
 }
 
@@ -117,13 +119,17 @@ void Level::update(float dt)
 void Level::render()
 {
 	beginDraw();
-	window->draw(wall1);
-	window->draw(ground_axis);
+	
+
+	window->draw(*background);
+	window->draw(layer2);
+	map.render(window);
 	window->draw((*player));
 	window->draw(player_box); 
 	//window->draw(sword_box);
 	window->draw(player->player_sprite);
-	map.render(window);
+
+
 	endDraw();
 	player->OnStartOfFrame();
 	

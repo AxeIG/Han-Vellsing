@@ -8,7 +8,7 @@ PauseMenu::PauseMenu(sf::RenderWindow* hwnd, Input* in, GameState* gs, AudioMana
 	gameState = gs;
 	audio = aud;
 
-
+	
 	//Initialise menu buttons
 	exit_button.setPosition(sf::Vector2f(300, 200));
 	exit_button.setSize(sf::Vector2f(200, 40));
@@ -22,8 +22,6 @@ PauseMenu::PauseMenu(sf::RenderWindow* hwnd, Input* in, GameState* gs, AudioMana
 	resume_button.setCollider(true);
 	resume_button.setCollisionBox(0, 0, resume_button.getSize().x, resume_button.getSize().y);
 	
-
-
 	
 }
 
@@ -50,11 +48,17 @@ void PauseMenu::handleInput(float dt) {
 }
 
 
+
 void PauseMenu::update(float dt) {
 	
+	sf::Vector2f camera_center = window->getView().getCenter();
 
-	resume_button.setPosition(window->getView().getCenter().x - resume_button.getSize().x / 2, resume_button.getPosition().y);
-	exit_button.setPosition(window->getView().getCenter().x - exit_button.getSize().x / 2, exit_button.getPosition().y);
+	
+	resume_button.setPosition(camera_center.x - resume_button.getSize().x / 2, camera_center.y +resume_button.getSize().y );
+
+
+	exit_button.setSize(sf::Vector2f(200, 40));
+	exit_button.setPosition(camera_center.x - exit_button.getSize().x / 2, camera_center.y- exit_button.getSize().y );
 	
 
 }

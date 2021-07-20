@@ -49,10 +49,10 @@ private:
 	sf::Time cooldown;
 
 	sf::Vector2f gravity, jump_hold_acceleration;
-	const float speed = 5.f;
+	const float time_per_pixel = 5.f;
 
 	// Physics simulations
-	const float physics_scale = 20.f;
+	
 
 public :
 

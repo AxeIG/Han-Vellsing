@@ -93,6 +93,9 @@
     <ClCompile Include="Player.cpp">
       <Filter>Source Files\Entities\Player</Filter>
     </ClCompile>
+    <ClCompile Include="Background.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="README.txt">
@@ -153,6 +156,9 @@
     </ClInclude>
     <ClInclude Include="ControlsMenu.h">
       <Filter>Header Files\Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="Background.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

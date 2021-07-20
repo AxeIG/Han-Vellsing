@@ -61,6 +61,7 @@ protected:
 public:
 
 	//Data
+	static const float physics_scale;
 	CollisionLayer collision_layer = CollisionLayer::NONE;
 
 };

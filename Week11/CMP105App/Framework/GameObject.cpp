@@ -1,6 +1,7 @@
 #include "GameObject.h"
 #include<iostream>
 
+ const float GameObject:: physics_scale = 30.f;
 GameObject::GameObject()
 {
 	input = nullptr;
