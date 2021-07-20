@@ -62,7 +62,6 @@ public:
 
 	//Data
 	CollisionLayer collision_layer = CollisionLayer::NONE;
-	static std::vector<GameObject*>all_gameObjects;
 
 };
 

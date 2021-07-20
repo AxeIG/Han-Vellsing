@@ -37,8 +37,8 @@ void Player::initialisePlayer() {
 	attacking = false;
 
 	//Setting the Player's collision box and characteristics
-	setSize(sf::Vector2f(20, -40));
-	setOrigin(getSize().x / 2, 0.0f);
+	setSize(sf::Vector2f(20, 40));
+	setOrigin(getSize().x / 2, getSize().y);
 	setCollisionBox(0, 0, getSize().x, getSize().y);
 	setCollider(true);
 	//initialise physics variables
@@ -158,7 +158,7 @@ void Player::update(float dt) {
 		velocity.x = 0.0f;
 		//acceleration.y = 0.0f;
 	}
-	std::cout << "Offset.X" << offset.x << " " << "Offset.Y" << offset.y << std::endl;
+	//std::cout << "Offset.X" << offset.x << " " << "Offset.Y" << offset.y << std::endl;
 
 	//Applies vertical and horizontal forces to the character
 	if (velocity != sf::Vector2f(0, 0)) {
@@ -180,11 +180,22 @@ void Player::update(float dt) {
 
 void Player::collisionResponse(GameObject* gameobject) {
 
-	/*if (gameobject->collision_layer == CollisionLayer::PLATFORM) {
+	//Dependend on player origin being at bottom mid
+	if (gameobject->collision_layer == CollisionLayer::PLATFORM) {
 
-		if()
-		if(previous_position().x)
-	}*/
+		sf::Vector2f collider_pos = gameobject->getPosition();
+		float  collider_size = gameobject->getCollisionBox().width;
+		float  collider_right_point_Xpos = (collider_pos.x + collider_size);
+
+		//Dependend on platform origin point being 0,0 (top_left corner)
+		if (previous_position.y > collider_pos.y) {
+
+			if ((previous_position.x >= collider_pos.x)&&(previous_position.x <= collider_right_point_Xpos)) {
+				velocity.y = 0;
+				setPosition(getPosition().x, collider_pos.y);
+			}
+		}
+	}
 }
 
 void Player::Jump(float dt) { //Simluates the character's jump

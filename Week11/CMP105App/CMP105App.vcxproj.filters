@@ -75,9 +75,6 @@
     <ClCompile Include="Framework\VectorHelper.cpp">
       <Filter>Framework</Filter>
     </ClCompile>
-    <ClCompile Include="Player.cpp">
-      <Filter>Source Files\Entities\Player</Filter>
-    </ClCompile>
     <ClCompile Include="Map.cpp">
       <Filter>Source Files\Map</Filter>
     </ClCompile>
@@ -92,6 +89,9 @@
     </ClCompile>
     <ClCompile Include="ControlsMenu.cpp">
       <Filter>Source Files\Menu</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>Source Files\Entities\Player</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -9,6 +9,7 @@ Map::Map() {
 	//SETUP values for tiles, textures and collison
 
 	//Initialise air tile (0)
+	
 	GameObject tile = GameObject();
 	tile.setSize(sf::Vector2f(TILE_SIZE, TILE_SIZE));
 	tile.setCollisionBox(0, 0, TILE_SIZE, TILE_SIZE);
@@ -20,6 +21,7 @@ Map::Map() {
 	//Initialise long stone platform tile tile (1-5)
 	for (int i = 0; i < 5; i++)
 	{
+		tile.collision_layer = CollisionLayer::PLATFORM;
 		tile.setSize(sf::Vector2f(TILE_SIZE, TILE_SIZE));
 		tile.setCollisionBox(0, 0, TILE_SIZE, TILE_SIZE);
 		tile.setCollider(true);
@@ -36,7 +38,7 @@ Map::Map() {
 			tile = GameObject(CollisionLayer::GROUND);
 			tile.setSize(sf::Vector2f(TILE_SIZE, TILE_SIZE));
 			tile.setCollisionBox(0, 0, TILE_SIZE, TILE_SIZE);
-			tile.setCollider(true);
+			tile.setCollider(false);
 			tile.setTextureRect(sf::IntRect(32 + j * CUT_SIZE, 64 + i * CUT_SIZE, CUT_SIZE, CUT_SIZE));
 			tileSet.push_back(tile);
 		}
@@ -49,7 +51,7 @@ Map::Map() {
 			tile = GameObject(CollisionLayer::GROUND);
 			tile.setSize(sf::Vector2f(TILE_SIZE, TILE_SIZE));
 			tile.setCollisionBox(0, 0, TILE_SIZE, TILE_SIZE);
-			tile.setCollider(true);
+			tile.setCollider(false);
 			tile.setTextureRect(sf::IntRect(384 + j * CUT_SIZE, 128 + i * CUT_SIZE, CUT_SIZE, CUT_SIZE));
 			tileSet.push_back(tile);
 		}
@@ -59,7 +61,7 @@ Map::Map() {
 	for (int i = 0; i < 3; i++)
 	{
 		for (int j = 0; j < 2; j++) {
-			tile = GameObject(CollisionLayer::GROUND);
+			tile = GameObject(CollisionLayer::WALL);
 			tile.setSize(sf::Vector2f(TILE_SIZE, TILE_SIZE));
 			tile.setCollisionBox(0, 0, TILE_SIZE, TILE_SIZE);
 			tile.setCollider(true);

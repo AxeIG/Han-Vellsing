@@ -1,17 +1,34 @@
 #include "Collision.h"
+#include<iostream>
 
 // Check AABB for collision. Returns true if collision occurs.
 bool Collision::checkBoundingBox(GameObject* s1, GameObject* s2)
 {
+
+	if (s1->getPosition().x ==100 && s1->getPosition().y<96)
+	{
+	
+		std::cout << "End" << std::endl;
+		int a = 3;
+	}
+	sf::FloatRect colBox = s1->getCollisionBox();
+	sf::FloatRect colBox2=s2->getCollisionBox();
+
+	std::cout << "UNO:" << s1->getCollisionBox().left << " " << s1->getCollisionBox().width << " " << s2->getCollisionBox().left << std::endl;
 	if (s1->getCollisionBox().left + s1->getCollisionBox().width < s2->getCollisionBox().left)
 		return false;
+	std::cout << "DOS:" << s1->getCollisionBox().left << " " << s2->getCollisionBox().left << " " << s2->getCollisionBox().width << std::endl;
 	if (s1->getCollisionBox().left > s2->getCollisionBox().left + s2->getCollisionBox().width)
 		return false;
+	std::cout << "TRE:" << s1->getCollisionBox().top << " " << s1->getCollisionBox().height << " " << s2->getCollisionBox().top << std::endl;
 	if (s1->getCollisionBox().top + s1->getCollisionBox().height < s2->getCollisionBox().top)
 		return false;
+		
+	std::cout << "QUA:" << s1->getCollisionBox().top << " " << s2->getCollisionBox().top << " " << s2->getCollisionBox().height << std::endl;
 	if (s1->getCollisionBox().top > s2->getCollisionBox().top + s2->getCollisionBox().height)
 		return false;
 
+	std::cout << "SUCCESS" << std::endl;
 	return true;
 }
 

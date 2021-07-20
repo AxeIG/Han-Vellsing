@@ -10,7 +10,6 @@ Level::Level(sf::RenderWindow* hwnd, Input* in, GameState* gs, AudioManager* aud
 
 	player =new Player(100, -100);
 
-	GameObject::all_gameObjects.size();
 	level_name = LevelName::LEVEL1;
 	// initialise game objects
 	view = window->getView();
@@ -72,14 +71,26 @@ void Level::handleInput(float dt)
 void Level::update(float dt)
 {
 
-	for (int i = 0; i < GameObject::all_gameObjects.size() - 1; ++i) {
-		//std::cout << GameObject::all_gameObjects[i] << std::endl;
+	player->update(dt);
+	player_box.setPosition(player->getCollisionBox().left, player->getCollisionBox().top);
+	//sword_box.setPosition(player.getSword().left, player.getSword().top);
+
+	std::cout << "//////////////////////////////////////////" << std::endl;
+	for (int i = 0; i < world_map->size(); i++)
+	{
+		if ((*world_map)[i].isCollider()) {
+			std::cout << "I CAN COLIDE : " << i << std::endl;
+			if (Collision::checkBoundingBox(player, &(*world_map)[i])) {
+
+				std::cout << "I HAVE COLLIDED" << std::endl;
+				player->collisionResponse(&(*world_map)[i]);
+			}
+		}
 	}
 
 	//Collision Check for all GameObjects
-	for(int i = 0; i < GameObject::all_gameObjects.size()-1; ++i)
+	/*for(int i = 0; i < GameObject::all_gameObjects.size()-1; ++i)
 	{
-
 		if (!GameObject::all_gameObjects[i]->isCollider()) continue;
 
 		for (int j = i + 1; j < GameObject::all_gameObjects.size(); ++j)
@@ -88,28 +99,17 @@ void Level::update(float dt)
 
 			if (Collision::checkBoundingBox(GameObject::all_gameObjects[i], GameObject::all_gameObjects[j])) {
 
-				//std::cout << "COLLIDED" << std::endl;
-				/*GameObject::all_gameObjects[i]->collisionResponse(GameObject::all_gameObjects[j]);
-				GameObject::all_gameObjects[j]->collisionResponse(GameObject::all_gameObjects[i]);*/
+				std::cout << "COLLIDED" << std::endl;
+				GameObject::all_gameObjects[i]->collisionResponse(GameObject::all_gameObjects[j]);
+				GameObject::all_gameObjects[j]->collisionResponse(GameObject::all_gameObjects[i]);
 			}
 		}
-	}
-
-
-	player_box.setPosition(player->getCollisionBox().left, player->getCollisionBox().top);
-	//sword_box.setPosition(player.getSword().left, player.getSword().top);
-
-	player->update(dt);
-
-	//player.setPosition(window->getSize().x/2, window->getSize().y / 2);
-
-	if (collision.checkBoundingBox(player,&wall1)) {
-		//std::cout << "WHOWHOWHOHWOHWOHWOHWOHOWHWO";
-	}
+	}*/
+	
 
 	view.setCenter(player->getPosition().x, player->getPosition().y);
 	window->setView(view);
-
+	
 
 }
 
