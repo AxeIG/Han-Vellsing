@@ -76,7 +76,7 @@ void Animation::stop()
 }
 
 // Set animation speed, in Frames per Second.
-void Animation::setFrameSpeed(float time_per_pixel)
+void Animation::setFrameSpeed(float speed)
 {
-	animationSpeed = time_per_pixel;
+	animationSpeed = speed;
 }

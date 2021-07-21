@@ -2,17 +2,27 @@
 #include<iostream>
 
 #define SWORD_WIDTH 100
+
+// Animation definitions
 #define ATTACK_ANIM_WIDTH 96
 #define ANIM_HEIGHT 65
 #define IDLE_WIDTH 38
 #define JATTK_WIDTH 84
 #define JUMP_WIDTH 61
 #define WALK_WIDTH 66
+
+// Player data
 #define PLAYER_HEIGHT 32
 #define PLAYER_WIDTH 16
 #define MAX_JUMP_HEIGHT 128
 
-Player::Player() : GameObject() {
+// Physics
+#define MOVE_FORCE speed * physics_scale
+#define JUMP_FORCE -speed * physics_scale
+#define JUMP_FORCE_HOLD -9.8f * physics_scale
+
+
+Player::Player() : Character() {
 	
 	setPosition(0, 0);
 	initialisePlayer();
@@ -25,38 +35,38 @@ Player::Player(float x, float y) {
 }
 
 void Player::initialisePlayer() {
+	
+	// cooldown = clock.getElapsedTime();//Variable used for managing Skills and Jump Cooldown
+	// clock.restart();
+
 
 	jump_start_position = getPosition();
 	previous_position = getPosition();
 	collision_layer = CollisionLayer::PLAYER;
-	clock.restart();
-	cooldown = clock.getElapsedTime();//Variable used for managing Skills and Jump Cooldown
 	health = 100; //Variable representing the player's health
 	landed = false;//Landing state
 	falling = false;
 	attacking = false;
 
-	//Setting the Player's collision box and characteristics
-	setSize(sf::Vector2f(PLAYER_WIDTH, PLAYER_HEIGHT));
-	setOrigin(0,0);
+
+	// Setting the Player's collision box and characteristics
+	setSize(sf::Vector2f(PLAYER_WIDTH*scale_factor, PLAYER_HEIGHT*scale_factor));
+	sprite.setSize(getSize());
 	setCollisionBox(0, 0, getSize().x, getSize().y);
 	setCollider(true);
-	//initialise physics variables
+
+	// initialise physics variables
 	velocity = sf::Vector2f(0, 0) * physics_scale;
 	gravity = sf::Vector2f(0, 9.8) * physics_scale;
 
-	//Settling the sword's collision box
-	//sword.setCollisionBox(getCollisionBox().left + getCollisionBox().width, getCollisionBox().top, SWORD_WIDTH, getSize().y);
+	// Settling the sword's collision box
+	// sword.setCollisionBox(getCollisionBox().left + getCollisionBox().width, getCollisionBox().top, SWORD_WIDTH, getSize().y);
 
 	//Loading player spritesheet
 	texture.loadFromFile("gfx/herospritesheet.png");
-	player_sprite.setTexture(&texture);
-
-
+	sprite.setTexture(&texture);
 	initialiseAnimations();
-	current_animation = &idle;
-	AssignAnimation(idle, true);
-	player_sprite.setTextureRect(current_animation->getCurrentFrame());
+	handleAnimation();
 }
 
 Player::~Player() {
@@ -64,9 +74,6 @@ Player::~Player() {
 }
 
 
-#define MOVE_FORCE time_per_pixel * physics_scale
-#define JUMP_FORCE -time_per_pixel * physics_scale
-#define JUMP_FORCE_HOLD -9.8f * physics_scale // Cancel gravity
 
 void Player::OnStartOfFrame() {
 
@@ -140,21 +147,11 @@ void Player::handleInput(float dt) {//Handles Player Inputs by applying force to
 
 void Player::update(float dt) {
 
-	//Animates current animation
-	current_animation->animate(dt);
-
-	/*if (landing) {
-		std::cout << "LANDING" << std::endl;
-	}
-	else { std::cout << "NOT" << std::endl; }*/
-
-	//std::cout << velocity.y << " " << acceleration.y <<std::endl;
-
-	sf::Vector2f offset = velocity*dt + 0.5f * (gravity + jump_hold_acceleration)*dt*dt;
+	sf::Vector2f offset_pos = velocity*dt + 0.5f * (gravity + jump_hold_acceleration)*dt*dt;
 	velocity += (gravity + jump_hold_acceleration)* dt;
-	setPosition(getPosition() + offset);
+	// setPosition(getPosition() + offset_pos);
 
-	//Applies vertical and horizontal forces to the character
+	// Applies vertical and horizontal forces to the character
 	if (velocity != sf::Vector2f(0, 0)) {
 		move(velocity.x * dt, velocity.y * dt);
 	}
@@ -166,15 +163,9 @@ void Player::update(float dt) {
 	else sword.setCollisionBox(getCollisionBox().left - SWORD_WIDTH, getCollisionBox().top, SWORD_WIDTH, -getSize().y);*/
 
 
+	// Update sprite and animations depenging on states
+	current_animation->animate(dt);
 	handleAnimation();
-	//Depends on Animation being handled beforehand
-	int new_x_position = getPosition().x - player_sprite.getSize().x / 2 + getSize().x / 2;
-	int new_y_position = getPosition().y - player_sprite.getSize().y+ getSize().y;
-	player_sprite.setPosition(new_x_position, new_y_position);
-	player_sprite.setTextureRect(current_animation->getCurrentFrame());
-
-	
-	
 }
 
 void Player::collisionResponse(GameObject* gameobject) {
@@ -203,8 +194,6 @@ void Player::collisionResponse(GameObject* gameobject) {
 	}
 	//Wall collision
 	else if (gameobject->collision_layer == CollisionLayer::WALL) {
-
-		
 		
 		//Check player top
 		if(previous_position.y >= collider_pos.y+collider_size.y) {
@@ -248,29 +237,6 @@ void Player::collisionResponse(GameObject* gameobject) {
 	}
 }
 
-void Player::Jump(float dt) { //Simluates the character's jump
-
-	
-}
-
-
-void Player::AssignAnimation(Animation& animation, bool looping) {
-
-	bool  is_flipped = current_animation->getFlipped();
-	if (current_animation != &animation) {
-		current_animation = &animation;
-		current_animation->reset();
-		current_animation->setLooping(looping);
-		current_animation->setPlaying(true);
-
-		sf::IntRect frame_rectangle = current_animation->getCurrentFrame();
-		player_sprite.setSize(sf::Vector2f(abs(frame_rectangle.width), abs(frame_rectangle.height)));
-	}
-
-   //Flipping the character based on his non-zero horizontal velocity or else it keeps the previous flip state
-	current_animation->setFlipped((velocity.x < 0 && velocity.x!=0) || (velocity.x==0 && is_flipped ));
-}
-
 
 void Player::handleAnimation() {
 
@@ -302,27 +268,6 @@ void Player::handleAnimation() {
 
 
 }
-
-
-sf::FloatRect Player::getSword() {
-
-	//return sword.getCollisionBox();
-	return sf::FloatRect();
-}
-
-
-void Player::checkAttack() {
-
-	//if current_animation.getFrame()==frame 1 && frame 2 attacking==true else attacking==false
-	
-}
-
-bool Player::getAttack() {
-
-	return attacking;
-}
-
-
 
 void Player::initialiseAnimations() {
 
@@ -371,18 +316,28 @@ void Player::initialiseAnimations() {
 	jump_attack.addFrame(sf::IntRect(0, 65, JATTK_WIDTH, ANIM_HEIGHT));
 	jump_attack.setFrameSpeed(1.f / 6.f);
 
-
-}
-void Player::setHealth(int health) {
-
-	this->health = health;
+	current_animation = &idle;
+	sf::IntRect frame_rectangle = current_animation->getCurrentFrame();
+	sprite.setSize(sf::Vector2f(abs(frame_rectangle.width * scale_factor), abs(frame_rectangle.height * scale_factor)));
 }
 
-int Player::getHealth() {
-
-	return health;
-
+sf::FloatRect Player::getSword() {
+	//return sword.getCollisionBox();
+	return sf::FloatRect();
 }
+
+void Player::checkAttack() {
+
+	//if current_animation.getFrame()==frame 1 && frame 2 attacking==true else attacking==false
+	
+}
+
+bool Player::getAttack() {
+
+	return attacking;
+}
+
+
 
 
 

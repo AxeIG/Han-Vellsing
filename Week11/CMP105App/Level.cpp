@@ -48,6 +48,9 @@ Level::Level(sf::RenderWindow* hwnd, Input* in, GameState* gs, AudioManager* aud
 	player =new Player(456, -250);
 	player->setInput(input);
 
+	imp = new Imp();
+	imp->setPosition(500 , -250);
+
 	//collision boxes checkup
 	player_box.setSize(sf::Vector2f(player->getCollisionBox().width, player->getCollisionBox().height));
 	player_box.setFillColor(sf::Color::Red);
@@ -58,7 +61,9 @@ Level::Level(sf::RenderWindow* hwnd, Input* in, GameState* gs, AudioManager* aud
 
 Level::~Level()
 {
-
+	//Manually destroying pointers
+	delete player;
+	delete background;
 }
 
 // handle user input
@@ -84,9 +89,9 @@ void Level::handleInput(float dt)
 void Level::update(float dt)
 {
 	
-	std::cout << background->getPosition().x << " " << background->getPosition().y;
 	background->updateTextureCoordinates(dt);
 	player->update(dt);
+	imp->update(dt);
 	//sword_box.setPosition(player.getSword().left, player.getSword().top);
 
 	for (int i = 0; i < world_map->size(); i++){
@@ -125,9 +130,11 @@ void Level::render()
 	window->draw(layer2);
 	map.render(window);
 	window->draw((*player));
-	window->draw(player_box); 
+	window->draw((*imp));
+	window->draw((imp->sprite));
+	//window->draw(player_box); 
 	//window->draw(sword_box);
-	window->draw(player->player_sprite);
+	window->draw(player->sprite);
 
 
 	endDraw();

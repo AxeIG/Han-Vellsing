@@ -13,6 +13,7 @@
 #include"Background.h"
 #include"Player.h"
 #include"Map.h"
+#include"Imp.h"
 
 
 class Level : public BaseLevel{
@@ -29,6 +30,7 @@ private:
 	// Default variables for level class.
 
 	Player* player;
+	Imp* imp;
 	sf::RectangleShape player_box/*, sword_box*/;
 	sf::View view;
 	GameObject wall1 = GameObject();

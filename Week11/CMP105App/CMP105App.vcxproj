@@ -158,7 +158,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Background.cpp" />
+    <ClCompile Include="Character.cpp" />
     <ClCompile Include="ControlsMenu.cpp" />
+    <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="Framework\Animation.cpp" />
     <ClCompile Include="Framework\AudioManager.cpp" />
     <ClCompile Include="Framework\BaseLevel.cpp" />
@@ -170,6 +172,7 @@
     <ClCompile Include="Framework\SoundObject.cpp" />
     <ClCompile Include="Framework\TileMap.cpp" />
     <ClCompile Include="Framework\VectorHelper.cpp" />
+    <ClCompile Include="Imp.cpp" />
     <ClCompile Include="Level.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MainMenu.cpp" />
@@ -183,7 +186,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Background.h" />
+    <ClInclude Include="Character.h" />
     <ClInclude Include="ControlsMenu.h" />
+    <ClInclude Include="Enemy.h" />
     <ClInclude Include="Framework\Animation.h" />
     <ClInclude Include="Framework\AudioManager.h" />
     <ClInclude Include="Framework\BaseLevel.h" />
@@ -195,6 +200,7 @@
     <ClInclude Include="Framework\SoundObject.h" />
     <ClInclude Include="Framework\TileMap.h" />
     <ClInclude Include="Framework\VectorHelper.h" />
+    <ClInclude Include="Imp.h" />
     <ClInclude Include="Level.h" />
     <ClInclude Include="MainMenu.h" />
     <ClInclude Include="Map.h" />

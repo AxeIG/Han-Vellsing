@@ -16,9 +16,6 @@
     <Filter Include="Framework">
       <UniqueIdentifier>{f2badd73-2c61-4d1a-996c-51af9b66bfe4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Player">
-      <UniqueIdentifier>{169ee34c-7130-41ca-850f-d0c4812ec878}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Map">
       <UniqueIdentifier>{eb42f4fc-9ddc-4730-9c9e-3197668b3f3b}</UniqueIdentifier>
     </Filter>
@@ -28,14 +25,14 @@
     <Filter Include="Source Files\Entities">
       <UniqueIdentifier>{ca4c33ce-bfef-4cc6-aab1-b8bf4720eb41}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Entities\Player">
-      <UniqueIdentifier>{ad99f2eb-9c8b-4544-8036-ead831fec26e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Menu">
       <UniqueIdentifier>{35886338-666b-4838-b4a7-cd9f28e7d201}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\Menu">
       <UniqueIdentifier>{439b5bce-bd67-48a5-b02b-cb612a63dd92}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Enteteties">
+      <UniqueIdentifier>{1814f860-6744-4900-8494-0eed163412f3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -90,11 +87,20 @@
     <ClCompile Include="ControlsMenu.cpp">
       <Filter>Source Files\Menu</Filter>
     </ClCompile>
-    <ClCompile Include="Player.cpp">
-      <Filter>Source Files\Entities\Player</Filter>
-    </ClCompile>
     <ClCompile Include="Background.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>Source Files\Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemy.cpp">
+      <Filter>Source Files\Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="Imp.cpp">
+      <Filter>Source Files\Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="Character.cpp">
+      <Filter>Source Files\Entities</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -142,9 +148,6 @@
     <ClInclude Include="Framework\VectorHelper.h">
       <Filter>Framework</Filter>
     </ClInclude>
-    <ClInclude Include="Player.h">
-      <Filter>Header Files\Player</Filter>
-    </ClInclude>
     <ClInclude Include="Map.h">
       <Filter>Header Files\Map</Filter>
     </ClInclude>
@@ -159,6 +162,18 @@
     </ClInclude>
     <ClInclude Include="Background.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>Header Files\Enteteties</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemy.h">
+      <Filter>Header Files\Enteteties</Filter>
+    </ClInclude>
+    <ClInclude Include="Imp.h">
+      <Filter>Header Files\Enteteties</Filter>
+    </ClInclude>
+    <ClInclude Include="Character.h">
+      <Filter>Header Files\Enteteties</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

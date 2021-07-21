@@ -15,7 +15,7 @@ public:
 
 	// Create animation
 	void addFrame(sf::IntRect rect);
-	void setFrameSpeed(float time_per_pixel);
+	void setFrameSpeed(float speed);
 	int getSize();
 
 	// update/reset animation

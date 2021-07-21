@@ -1,9 +1,8 @@
 #pragma once
-#include"Framework/GameObject.h"
-#include"Framework/Animation.h"
+#include"Character.h"
 #include<iostream>
 class Player:
-	public GameObject
+	public Character
 {
 public:
 
@@ -14,16 +13,11 @@ public:
 	void handleInput(float dt);
 	void update(float dt);
 
-	void Jump(float dt);
-	void AssignAnimation(Animation &animation,bool looping);
-	void handleAnimation();
-
-	void setHealth(int health);
-	int  getHealth();
-
 	sf::FloatRect getSword();
 	bool getAttack();
 	void checkAttack();
+
+	void handleAnimation() override;
 
 	void collisionResponse(GameObject* collider) override;
 	void OnStartOfFrame();
@@ -32,24 +26,22 @@ public:
 
 private:
 
-	void initialiseAnimations();
+	void initialiseAnimations() override;
 
 	// State
-	int health;
-	bool landed,falling, attacking;
-	sf::Texture texture;
+	bool landed, falling, attacking;
+	
 	//GameObject sword = GameObject();
 
 	// Animation
 	Animation idle, walk, attack, jump, jump_attack;
-	Animation* current_animation;
 
 	// Cooldowns
 	sf::Clock clock;
 	sf::Time cooldown;
 
 	sf::Vector2f gravity, jump_hold_acceleration;
-	const float time_per_pixel = 5.f;
+	const float speed = 5.f;
 
 	// Physics simulations
 	
@@ -57,9 +49,5 @@ private:
 public :
 
 	sf::Vector2f previous_position, jump_start_position;
-	GameObject player_sprite = GameObject();
-
-
-
 
 };
