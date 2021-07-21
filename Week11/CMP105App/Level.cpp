@@ -45,14 +45,14 @@ Level::Level(sf::RenderWindow* hwnd, Input* in, GameState* gs, AudioManager* aud
 	world_map = map.getLevel();
 
 
-	player =new Player(456, -250);
+	player =new Player(128, -250);
 	player->setInput(input);
 
 	imp = new Imp();
-	imp->setPosition(500 , -250);
+	imp->setPosition(512 , -200);
 
 	//collision boxes checkup
-	player_box.setSize(sf::Vector2f(player->getCollisionBox().width, player->getCollisionBox().height));
+	player_box.setSize(sf::Vector2f(imp->getCollisionBox().width, imp->getCollisionBox().height));
 	player_box.setFillColor(sf::Color::Red);
 
 	//sword_box.setSize(sf::Vector2f(player.getSword().width, player.getSword().height));
@@ -102,7 +102,7 @@ void Level::update(float dt)
 			}
 		}
 	}
-	player_box.setPosition(player->getCollisionBox().left, player->getCollisionBox().top);
+	player_box.setPosition(imp->getCollisionBox().left, imp->getCollisionBox().top);
 
 
 	if (player->getPosition().x <= view.getSize().x/2) {
@@ -115,6 +115,10 @@ void Level::update(float dt)
 	background->setPosition(view.getCenter().x-view.getSize().x/2, view.getCenter().y-view.getSize().y/2);
 	layer2.setPosition(view.getCenter().x - view.getSize().x / 2, view.getCenter().y-layer2.getSize().y/2);
 	
+	if (Collision::checkBoundingBox(imp, player)) {
+
+		imp->collisionResponse(player);
+	}
 
 	//std::cout << player->getPosition().x << " " << player->getPosition().y << std::endl;
 
@@ -129,16 +133,16 @@ void Level::render()
 	window->draw(*background);
 	window->draw(layer2);
 	map.render(window);
+	window->draw(player_box); 
 	window->draw((*player));
 	window->draw((*imp));
 	window->draw((imp->sprite));
-	//window->draw(player_box); 
 	//window->draw(sword_box);
 	window->draw(player->sprite);
 
 
 	endDraw();
-	player->OnStartOfFrame();
+	player->updateState();
 	
 
 }

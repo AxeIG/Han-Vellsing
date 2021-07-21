@@ -75,9 +75,20 @@ Player::~Player() {
 
 
 
-void Player::OnStartOfFrame() {
+void Player::updateState() {
 
 	//direction = sf::Vector2f(0.f, 0.f);
+
+	
+
+
+
+
+
+
+
+
+
 
 	if ((falling)&&(velocity.y == 0)) {
 
@@ -314,7 +325,10 @@ void Player::initialiseAnimations() {
 	//jump_attack.addFrame(sf::IntRect(1536, 0, JATTK_WIDTH, ANIM_HEIGHT));
 	jump_attack.addFrame(sf::IntRect(1632, 0, JATTK_WIDTH, ANIM_HEIGHT));
 	jump_attack.addFrame(sf::IntRect(0, 65, JATTK_WIDTH, ANIM_HEIGHT));
-	jump_attack.setFrameSpeed(1.f / 6.f);
+	//jump_attack.addFrame(sf::IntRect(288, 65, JUMP_WIDTH, ANIM_HEIGHT));
+	jump_attack.addFrame(sf::IntRect(384, 65, JUMP_WIDTH, ANIM_HEIGHT));
+	jump_attack.addFrame(sf::IntRect(480, 65, JUMP_WIDTH, ANIM_HEIGHT));
+	jump_attack.setFrameSpeed(1.f / 8.f);
 
 	current_animation = &idle;
 	sf::IntRect frame_rectangle = current_animation->getCurrentFrame();

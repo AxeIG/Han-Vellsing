@@ -27,15 +27,15 @@ void Character::AssignAnimation(Animation& animation, bool looping) {
 		current_animation->setLooping(looping);
 		current_animation->setPlaying(true);
 
-		sf::IntRect frame_rectangle = current_animation->getCurrentFrame();
 		//sprite.setPosition(getPosition().x, getPosition().y);
-		sprite.setSize(sf::Vector2f(abs(frame_rectangle.width*scale_factor), abs(frame_rectangle.height*scale_factor)));
 	}
 	//Flipping the character based on his non-zero horizontal velocity or else it keeps the previous flip state
 	current_animation->setFlipped((velocity.x < 0 && velocity.x != 0) || (velocity.x == 0 && is_flipped));
 
 	// Depends on Animation being handled beforehand
 	// Keeps sprite centered to the center of the player
+	sf::IntRect frame_rectangle = current_animation->getCurrentFrame();
+	sprite.setSize(sf::Vector2f(abs(frame_rectangle.width*scale_factor), abs(frame_rectangle.height*scale_factor)));
 	int new_x_position = getPosition().x - sprite.getSize().x / 2 + getSize().x / 2;
 	int new_y_position = getPosition().y - sprite.getSize().y + getSize().y;
 	sprite.setPosition(new_x_position, new_y_position);
@@ -44,6 +44,12 @@ void Character::AssignAnimation(Animation& animation, bool looping) {
 }
 
 void Character::initialiseAnimations() {
+
+
+}
+
+
+void Character::updateState() {
 
 
 }

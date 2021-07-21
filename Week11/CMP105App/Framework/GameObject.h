@@ -7,7 +7,7 @@
 #pragma once
 #include "SFML\Graphics.hpp"
 #include "Input.h"
-
+#include<iostream>
 	enum class CollisionLayer{NONE, ENEMY, PLAYER, SWORD, PROJECTILE, PLATFORM, WALL }; 
 
 class GameObject : public sf::RectangleShape

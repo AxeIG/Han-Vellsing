@@ -5,7 +5,7 @@ class Imp :
     public Enemy
 {
 public:
-enum class ImpStates{IDLE, ATTACK, TORNADO_ATTACK, DEAD};
+enum class ImpStates{IDLE, ATTACK, TORNADO_ATTACK,TORNADO_RETURN, DEAD};
 
     Imp();
     ~Imp();
@@ -14,14 +14,15 @@ enum class ImpStates{IDLE, ATTACK, TORNADO_ATTACK, DEAD};
     void update(float dt) override;
     void handleAnimation() override;
     void initialiseAnimations() override;
-
+    void updateState() override;
     void checkPlayer(GameObject player);
 
     void collisionResponse(GameObject* gameobject) override;
 
 private:
 
-    Animation idle, attack, tornado_attack; 
+    bool can_attack, can_tornado;
+    Animation idle, attack, tornado_attack, tornado_return; 
 
 };
 

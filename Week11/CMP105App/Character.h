@@ -13,14 +13,14 @@ public:
 	virtual void update(float dt);
 	virtual void handleAnimation();
 	virtual void initialiseAnimations();
-
+	virtual void updateState();
 	void AssignAnimation(Animation& animation, bool looping);
 
 	void setHealth(int health);
 	int  getHealth();
 
 
-	float scale_factor = 1.f;
+	float scale_factor = 2.f;
 	int health;
 	GameObject sprite;
 	sf::Texture texture;

@@ -2,17 +2,21 @@
 
 #define IMP_WIDTH 16
 #define IMP_HEIGHT 32
+#define TORNADO_SIZE 160 * scale_factor
 
 Imp::Imp() {
 
+	collision_layer == CollisionLayer::ENEMY;
 	//initialise object variables
-	//scale_factor = 5
+	can_attack = false;
+	can_tornado = false;
+	detection_radius = 128 * scale_factor;
 	setPosition(0, 0);
 	setSize(sf::Vector2f(IMP_WIDTH*scale_factor, IMP_HEIGHT*scale_factor));
 	sprite.setSize(getSize());
-	setCollisionBox(0, 0, getSize().x, getSize().y);
+	setCollisionBox(-detection_radius,-(TORNADO_SIZE+getSize().y) ,detection_radius*2+getSize().x, TORNADO_SIZE + getSize().y*2);
 	setCollider(true);
-	detection_radius = 300;
+	
 
 	// initialise physics variables
 	velocity = sf::Vector2f(0, 0);
@@ -24,7 +28,8 @@ Imp::Imp() {
 	initialiseAnimations();
 	handleAnimation();
 	AssignAnimation(idle, true);
-	sprite.setPosition(500, -250);
+	sprite.setPosition(500, -200);
+	state == ImpStates::IDLE;
 
 
 }
@@ -36,32 +41,98 @@ Imp::~Imp() {
 
 void Imp::update(float dt) {
 
+	updateState();
 	current_animation->animate(dt);
-	AssignAnimation(idle, true);
+	handleAnimation();
+
+}
+
+void Imp::updateState() {
+
+	if (state == ImpStates::TORNADO_ATTACK) {
+
+		std::cout << "TORNADO" << std::endl;
+		if (!current_animation->getPlaying()) {
+
+			//setDamageColliderON
+			state = ImpStates::TORNADO_RETURN;
+			std::cout << "/////////////////";
+
+		}
+	}
+	else if (state == ImpStates::TORNADO_RETURN) {
+
+		std::cout << "TORNADO_RETURN" << std::endl;
+		if (!current_animation->getPlaying()) {
+			//setDamageColliderOFF
+			can_tornado = false;
+			state = ImpStates::IDLE;
+		}
+	}
+	else if (state == ImpStates::IDLE) {
+
+		std::cout << "IDLE" << std::endl;
+		if (can_tornado) {
+			std::cout << "WHY DON'T I TORNADO" << std::endl;
+			state = ImpStates::TORNADO_ATTACK;
+		}
+		else if (can_attack) {
+			state = ImpStates::ATTACK;
+		}
+		
+
+	}
+	else if (state == ImpStates::ATTACK) {
+
+		if (can_tornado) {
+			state = ImpStates::TORNADO_ATTACK;
+		}
+		if (!current_animation->getPlaying()) {
+			state = ImpStates::IDLE;
+			can_attack = false;
+		}
+	}
 
 }
 void Imp::collisionResponse(GameObject* gameobject) {
+
 	sf::Vector2f gameobject_size = gameobject->getSize();
 	sf::Vector2f gameobject_pos = gameobject->getPosition();
+	float  gameobject_mid = gameobject_pos.x + gameobject_size.x / 2;
+	float imp_sprite_right = sprite.getPosition().x + sprite.getSize().x;
+	float imp_sprite_left = sprite.getPosition().x - sprite.getSize().x;
+	float imp_sprite_bottom = sprite.getPosition().y+sprite.getSize().y;
+	float imp_sprite_top = sprite.getPosition().y;
+	float gameobject_top = gameobject_pos.y;
+	float gameobject_bottom = gameobject_pos.y + gameobject_size.y;
 
+	
 	if (gameobject->collision_layer == CollisionLayer::PLAYER) {
-		if (getPosition().x < gameobject->getPosition().x) {
+		if (getPosition().x < gameobject_pos.x) {
+
+			velocity.x = -1;
+		}
+		else {
 
 			velocity.x = 1;
 		}
-		else {
-			velocity.x = -1;
-		}
-		if ((gameobject_pos.y + gameobject_size.y >= getPosition().y) && (gameobject_pos.x >= getPosition().x) && (gameobject_pos.x <= getPosition().x + getSize().x)) {
+		//if player's bottom extend is higher than the imp's sprite top extend
+		if (gameobject_bottom <= imp_sprite_top) {
+
+			//
+			if((gameobject_mid>= imp_sprite_left) && (gameobject_mid<= imp_sprite_right)) {
 
 			//FireTornado attack
-			state = ImpStates::TORNADO_ATTACK;
+				std::cout << "SHOULD TORNADO" << std::endl;
+				can_tornado = true;
+			}
 		}
-		else if ((abs(getPosition().x - gameobject->getPosition().x) <= detection_radius)&&(getPosition().y==gameobject->getPosition().y)) {
+		else {
 
-			//generate FireBall
-			state = ImpStates::ATTACK;
+		
+			can_attack = true;
 		}
+		
 	}
 	if (gameobject->collision_layer == CollisionLayer::SWORD) {
 
@@ -72,16 +143,20 @@ void Imp::collisionResponse(GameObject* gameobject) {
 
 void Imp::handleAnimation() {
 
-	if (state == ImpStates::ATTACK) {
+	 if (state == ImpStates::TORNADO_ATTACK) {
 
-		//AssignAnimation(attack, false);
-	}
-	else if (state == ImpStates::TORNADO_ATTACK) {
-		//AssignAnimation(tornado_attack, false);
-	}
-	else {
+		AssignAnimation(tornado_attack, false);
+	 }
+	 else if (state == ImpStates::TORNADO_RETURN) {
+		 AssignAnimation(tornado_return, false);
+	 }
+	else if (state == ImpStates::ATTACK) {
 
-		//AssignAnimation(idle, true);
+		 AssignAnimation(attack, false);
+	}
+	else if(state==ImpStates::IDLE){
+
+		AssignAnimation(idle, true);
 	}
 	
 }
@@ -94,8 +169,27 @@ void Imp::initialiseAnimations() {
 	idle.addFrame(sf::IntRect(165,  1, 55, 67));
 	idle.addFrame(sf::IntRect(  0, 68, 55, 67));
 	idle.addFrame(sf::IntRect( 55, 68, 55, 67));
-	idle.setFrameSpeed(1 / 10.f);
-	
+	idle.setFrameSpeed(1/10.f);
+
+	attack.addFrame(sf::IntRect(110,  68, 64, 64));
+	attack.addFrame(sf::IntRect(  0, 135, 64, 64));
+	attack.addFrame(sf::IntRect( 64, 135, 64, 64));
+	attack.addFrame(sf::IntRect(128, 135, 64, 64));
+	attack.setFrameSpeed(1/8.f);
+
+
+	tornado_attack.addFrame(sf::IntRect(0, 198, 74, 160));
+	tornado_attack.addFrame(sf::IntRect(74, 198, 74, 160));
+	tornado_attack.addFrame(sf::IntRect(148, 198, 74, 160));
+	tornado_attack.addFrame(sf::IntRect(0, 358, 74, 160));
+	tornado_attack.addFrame(sf::IntRect(74, 358, 74, 160));
+	tornado_attack.setFrameSpeed(1 / 8.f);
+
+
+	tornado_return.addFrame(sf::IntRect(148, 358, 74, 160));
+	tornado_return.addFrame(sf::IntRect(148, 198, 74, 160));
+	tornado_return.addFrame(sf::IntRect(74, 198, 74, 160));
+	tornado_return.setFrameSpeed(1 / 8.f);
 
 
 

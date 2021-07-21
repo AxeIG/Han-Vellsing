@@ -1,11 +1,12 @@
 #pragma once
 #include"Character.h"
 #include<iostream>
+
 class Player:
 	public Character
 {
 public:
-
+	enum class States{IDLE, WALK, JUMP, ATTACK, JUMP_ATTACK, ATTACK_RETURN};
 	Player();
 	Player(float x, float y);
 	~Player();
@@ -20,7 +21,7 @@ public:
 	void handleAnimation() override;
 
 	void collisionResponse(GameObject* collider) override;
-	void OnStartOfFrame();
+	void updateState() override;
 
 	void initialisePlayer();
 
@@ -34,7 +35,7 @@ private:
 	//GameObject sword = GameObject();
 
 	// Animation
-	Animation idle, walk, attack, jump, jump_attack;
+	Animation idle, walk, attack, jump, jump_attack, attack_return, jump_attack_return;
 
 	// Cooldowns
 	sf::Clock clock;
