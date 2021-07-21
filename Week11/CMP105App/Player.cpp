@@ -47,6 +47,7 @@ void Player::initialisePlayer() {
 	landed = false;//Landing state
 	falling = false;
 	attacking = false;
+	jump_attacking = false;
 
 
 	// Setting the Player's collision box and characteristics
@@ -78,19 +79,80 @@ Player::~Player() {
 void Player::updateState() {
 
 	//direction = sf::Vector2f(0.f, 0.f);
+	std::cout << velocity.x << " " << velocity.y << std::endl;
+	if ((state == PlayerStates::GROUNDED)) {
+		//std::cout << "I AM UPDATING" << std::endl;
+		if (velocity.y > 0) {
+			std::cout << "FALL" << std::endl;
+			state = PlayerStates::FALL;
+		}
+		else if (velocity.y < 0) {
+			std::cout << "JUMP" << std::endl;
 
+			state = PlayerStates::JUMP;
+		}
+		else if (attacking) {
+			std::cout << "ATTACK" << std::endl;
+
+			state = PlayerStates::ATTACK;
+		}
+	}
 	
+	else if (state == PlayerStates::ATTACK) {
+		if (!current_animation->getPlaying()) {
+			attacking = false;
+			// Set collider true;
+			state = PlayerStates::ATTACK_RETURN;
+		}
+	}
+	else if (state == PlayerStates::ATTACK_RETURN) 
+	{
+		//Set collider false
+		// TODO: make the animation breakable
+		if (!current_animation->getPlaying()) {
+			if (velocity.y == 0) {
+				state = PlayerStates::GROUNDED;
+			}
+			else if (velocity.y > 0) {
+				state = PlayerStates::FALL;
+			}
+			else if (velocity.y < 0) {
+				state = PlayerStates::JUMP;
+			}
+		}
+	}
+	else if (state == PlayerStates::JUMP) {
+	
+		if (attacking) {
+			state = PlayerStates::JUMP_ATTACK;
+			//Set collider on
+		}
+		else if (velocity.y >= 0) {
+			state = PlayerStates::FALL;
+		}
+	}
+	else if (state == PlayerStates::FALL) {
+	    if (attacking) {
+			state = PlayerStates::JUMP_ATTACK;
+			//Set collider on
+		}
+		else if (velocity.y == 0) {
+			state = PlayerStates::GROUNDED;
+		}
+	}
+	else if (state == PlayerStates::JUMP_ATTACK) {
+
+		//Set collider off
+		attacking = false;
+		if (velocity.y == 0) {
+			state = PlayerStates::GROUNDED;
+
+		}
+	}
 
 
 
-
-
-
-
-
-
-
-	if ((falling)&&(velocity.y == 0)) {
+	/*if ((falling)&&(velocity.y == 0)) {
 
 		falling = false;
 		landed = true;
@@ -112,7 +174,7 @@ void Player::updateState() {
 	else if ((landed) && (falling)) {
 
 		std::cout << "Error! Landed and Falling" << std::endl;
-	}
+	}*/
 
 	velocity.x = 0;
 	jump_hold_acceleration.y = 0;
@@ -126,18 +188,29 @@ void Player::handleInput(float dt) {//Handles Player Inputs by applying force to
 
 	if (input->isKeyDown(sf::Keyboard::Enter)) {
 
-		attacking = true;
+			attacking = true;
+		/*else { 
+			jump_attacking = true; 
+			if (current_animation != &jump_attack) {
+				
+			}
+		}
+	*/
 	}
 	//When The "W" key is pressed the player will start jumping
-	if ((input->isKeyDown(sf::Keyboard::W)) && (!falling)&&(!attacking)) {
 
-		if (landed) {
+	if (input->isKeyDown(sf::Keyboard::W)){// && (!falling)&&(!attacking)) {
+
+		if (state == PlayerStates::GROUNDED) {
 			velocity.y = JUMP_FORCE;
 			jump_start_position = getPosition();
 		}
 		else if (abs(jump_start_position.y - getPosition().y) <= MAX_JUMP_HEIGHT) 
 		{
-			jump_hold_acceleration.y = JUMP_FORCE_HOLD;
+			if (state == PlayerStates::JUMP) {
+				
+				jump_hold_acceleration.y = JUMP_FORCE_HOLD;
+			}
 		}
 		
 	}
@@ -158,9 +231,11 @@ void Player::handleInput(float dt) {//Handles Player Inputs by applying force to
 
 void Player::update(float dt) {
 
+	
 	sf::Vector2f offset_pos = velocity*dt + 0.5f * (gravity + jump_hold_acceleration)*dt*dt;
 	velocity += (gravity + jump_hold_acceleration)* dt;
 	// setPosition(getPosition() + offset_pos);
+
 
 	// Applies vertical and horizontal forces to the character
 	if (velocity != sf::Vector2f(0, 0)) {
@@ -208,42 +283,30 @@ void Player::collisionResponse(GameObject* gameobject) {
 		
 		//Check player top
 		if(previous_position.y >= collider_pos.y+collider_size.y) {
-
 			if ((previous_position.x + getSize().x > collider_pos.x) && (previous_position.x < collider_right_point_Xpos)) {
-
 					velocity.y = 0;
 					setPosition(getPosition().x, collider_pos.y+collider_size.y);
 			}
-
-
 		}
 		//check player bottom
 		else if (previous_position.y + getSize().y <= collider_pos.y) {
-
 			if ((previous_position.x + getSize().x > collider_pos.x) && (previous_position.x < collider_right_point_Xpos)) {
 				velocity.y = 0;
 				setPosition(getPosition().x, collider_pos.y - getSize().y);
 				//	std::cout << getPosition().y << " " << previous_position.y << std::endl;
-				
 			}
-
 		}
 		//Check from left
 		else if ((previous_position.x + getSize().x >= collider_pos.x) && (velocity.x > 0)) {
-
 			velocity.x = 0;
 			setPosition(collider_pos.x - getSize().x, getPosition().y);
 
 		}
 		//Check from right
 		else if ((previous_position.x <= collider_pos.x + collider_size.x) && (velocity.x < 0)) {
-
 			velocity.x= 0;
 			setPosition(collider_pos.x+collider_size.x , getPosition().y);
-
-
 		}
-
 		
 	}
 }
@@ -251,23 +314,54 @@ void Player::collisionResponse(GameObject* gameobject) {
 
 void Player::handleAnimation() {
 
+	if (state == PlayerStates::JUMP_ATTACK) {
 
-	if (attacking) {
-		
-		if (landed) {
+		AssignAnimation(jump_attack, false);
+	}
+	else if (state == PlayerStates::JUMP) {
+		AssignAnimation(jump, false);
+	}
+	else if (state == PlayerStates::FALL) {
+		AssignAnimation(jump, false);
+	}
+	else if (state == PlayerStates::ATTACK) {
 
-			if (!current_animation->getPlaying()) {
-				attacking = false;
-			}
-			AssignAnimation(attack, false);
+		AssignAnimation(attack, false);
+	}
+	else if (state == PlayerStates::ATTACK_RETURN) {
+		AssignAnimation(attack_return, false);
+	}
+	else if (state==PlayerStates::GROUNDED) {
+
+		if (velocity.x != 0) {
+			AssignAnimation(walk, true);
 		}
 		else {
-			AssignAnimation(jump_attack, false);
+			AssignAnimation(idle, true);
 		}
+	}
+	/*if (jump_attacking && !landed) {
 
+		if (current_animation != &jump_attack) {
+		
+		}
+		AssignAnimation(jump_attack, false);
+
+	}
+	else if (jump_attacking) {
+
+		jump_attacking = false;
+	}
+	else if (attacking) {
+
+		if (!current_animation->getPlaying()) {
+			attacking = false;
+		}
+		AssignAnimation(attack, false);
 	}
 	else if ((landed) && (velocity.x != 0)) {
 
+		std::cout << "I SHOULD WALK" << std::endl;
 		AssignAnimation(walk, true);
 	}
 	else if ((!landed) && (current_animation != &jump_attack)) {
@@ -275,8 +369,7 @@ void Player::handleAnimation() {
 	}
 	else{
 		AssignAnimation(idle, true);
-	}
-
+	}*/
 
 }
 
@@ -316,16 +409,19 @@ void Player::initialiseAnimations() {
 	//attack.addFrame(sf::IntRect(0, 0, ATTACK_ANIM_WIDTH, ANIM_HEIGHT));
 	attack.addFrame(sf::IntRect(96, 0, ATTACK_ANIM_WIDTH, ANIM_HEIGHT));
 	attack.addFrame(sf::IntRect(192, 0, ATTACK_ANIM_WIDTH, ANIM_HEIGHT));
-	attack.addFrame(sf::IntRect(288, 0, ATTACK_ANIM_WIDTH, ANIM_HEIGHT));
-	attack.addFrame(sf::IntRect(384, 0, ATTACK_ANIM_WIDTH, ANIM_HEIGHT));
-	attack.addFrame(sf::IntRect(480, 0, ATTACK_ANIM_WIDTH, ANIM_HEIGHT));
 	attack.setFrameSpeed(1.f / 10.f);
+	
+	attack_return.addFrame(sf::IntRect(288, 0, ATTACK_ANIM_WIDTH, ANIM_HEIGHT));
+	attack_return.addFrame(sf::IntRect(384, 0, ATTACK_ANIM_WIDTH, ANIM_HEIGHT));
+	attack_return.addFrame(sf::IntRect(480, 0, ATTACK_ANIM_WIDTH, ANIM_HEIGHT));
+	attack_return.setFrameSpeed(1.f / 10.f);
+
+
+
 
 	//Jump attack frames
-	//jump_attack.addFrame(sf::IntRect(1536, 0, JATTK_WIDTH, ANIM_HEIGHT));
 	jump_attack.addFrame(sf::IntRect(1632, 0, JATTK_WIDTH, ANIM_HEIGHT));
 	jump_attack.addFrame(sf::IntRect(0, 65, JATTK_WIDTH, ANIM_HEIGHT));
-	//jump_attack.addFrame(sf::IntRect(288, 65, JUMP_WIDTH, ANIM_HEIGHT));
 	jump_attack.addFrame(sf::IntRect(384, 65, JUMP_WIDTH, ANIM_HEIGHT));
 	jump_attack.addFrame(sf::IntRect(480, 65, JUMP_WIDTH, ANIM_HEIGHT));
 	jump_attack.setFrameSpeed(1.f / 8.f);

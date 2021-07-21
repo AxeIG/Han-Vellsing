@@ -51,7 +51,7 @@ void Imp::updateState() {
 
 	if (state == ImpStates::TORNADO_ATTACK) {
 
-		std::cout << "TORNADO" << std::endl;
+		//std::cout << "TORNADO" << std::endl;
 		if (!current_animation->getPlaying()) {
 
 			//setDamageColliderON
@@ -62,7 +62,7 @@ void Imp::updateState() {
 	}
 	else if (state == ImpStates::TORNADO_RETURN) {
 
-		std::cout << "TORNADO_RETURN" << std::endl;
+		//std::cout << "TORNADO_RETURN" << std::endl;
 		if (!current_animation->getPlaying()) {
 			//setDamageColliderOFF
 			can_tornado = false;
@@ -71,9 +71,9 @@ void Imp::updateState() {
 	}
 	else if (state == ImpStates::IDLE) {
 
-		std::cout << "IDLE" << std::endl;
+		//std::cout << "IDLE" << std::endl;
 		if (can_tornado) {
-			std::cout << "WHY DON'T I TORNADO" << std::endl;
+		//	std::cout << "WHY DON'T I TORNADO" << std::endl;
 			state = ImpStates::TORNADO_ATTACK;
 		}
 		else if (can_attack) {

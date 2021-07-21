@@ -122,6 +122,7 @@ void Level::update(float dt)
 
 	//std::cout << player->getPosition().x << " " << player->getPosition().y << std::endl;
 
+	player->updateState();
 }
 
 // Render level
@@ -142,7 +143,6 @@ void Level::render()
 
 
 	endDraw();
-	player->updateState();
 	
 
 }

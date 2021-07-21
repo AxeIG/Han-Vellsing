@@ -6,7 +6,7 @@ class Player:
 	public Character
 {
 public:
-	enum class States{IDLE, WALK, JUMP, ATTACK, JUMP_ATTACK, ATTACK_RETURN};
+	enum class PlayerStates{GROUNDED, JUMP, ATTACK, JUMP_ATTACK, ATTACK_RETURN, FALL};
 	Player();
 	Player(float x, float y);
 	~Player();
@@ -30,7 +30,7 @@ private:
 	void initialiseAnimations() override;
 
 	// State
-	bool landed, falling, attacking;
+	bool landed, falling, attacking, jump_attacking;
 	
 	//GameObject sword = GameObject();
 
@@ -49,6 +49,7 @@ private:
 
 public :
 
+	PlayerStates state;
 	sf::Vector2f previous_position, jump_start_position;
 
 };
