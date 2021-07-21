@@ -1,8 +1,7 @@
 #include"Player.h"
 #include<iostream>
 
-#define SWORD_WIDTH 100
-
+#define SWORD_WIDTH 30 * scale_factor
 // Animation definitions
 #define ATTACK_ANIM_WIDTH 96
 #define ANIM_HEIGHT 65
@@ -12,7 +11,7 @@
 #define WALK_WIDTH 66
 
 // Player data
-#define PLAYER_HEIGHT 32
+#define PLAYER_HEIGHT 40
 #define PLAYER_WIDTH 16
 #define MAX_JUMP_HEIGHT 128
 
@@ -35,10 +34,9 @@ Player::Player(float x, float y) {
 }
 
 void Player::initialisePlayer() {
-	
+
 	// cooldown = clock.getElapsedTime();//Variable used for managing Skills and Jump Cooldown
 	// clock.restart();
-
 
 	jump_start_position = getPosition();
 	previous_position = getPosition();
@@ -49,9 +47,8 @@ void Player::initialisePlayer() {
 	attacking = false;
 	jump_attacking = false;
 
-
 	// Setting the Player's collision box and characteristics
-	setSize(sf::Vector2f(PLAYER_WIDTH*scale_factor, PLAYER_HEIGHT*scale_factor));
+	setSize(sf::Vector2f(PLAYER_WIDTH * scale_factor, PLAYER_HEIGHT * scale_factor));
 	sprite.setSize(getSize());
 	setCollisionBox(0, 0, getSize().x, getSize().y);
 	setCollider(true);
@@ -60,26 +57,27 @@ void Player::initialisePlayer() {
 	velocity = sf::Vector2f(0, 0) * physics_scale;
 	gravity = sf::Vector2f(0, 9.8) * physics_scale;
 
-	// Settling the sword's collision box
-	// sword.setCollisionBox(getCollisionBox().left + getCollisionBox().width, getCollisionBox().top, SWORD_WIDTH, getSize().y);
-
 	//Loading player spritesheet
 	texture.loadFromFile("gfx/herospritesheet.png");
 	sprite.setTexture(&texture);
 	initialiseAnimations();
 	handleAnimation();
+
+	// Settling the sword's collision box and characteristics
+	sword.setCollider(false);
+	sword.collision_layer = CollisionLayer::SWORD;
+	sword.setSize(sf::Vector2f(SWORD_WIDTH + getSize().x , getSize().y));
+	sword.setCollisionBox(0, 0, sword.getSize().x, sword.getSize().y);
 }
 
 Player::~Player() {
 
 }
 
-
-
 void Player::updateState() {
 
 	//direction = sf::Vector2f(0.f, 0.f);
-	std::cout << velocity.x << " " << velocity.y << std::endl;
+	//std::cout << velocity.x << " " << velocity.y << std::endl;
 	if ((state == PlayerStates::GROUNDED)) {
 		//std::cout << "I AM UPDATING" << std::endl;
 		if (velocity.y > 0) {
@@ -101,13 +99,13 @@ void Player::updateState() {
 	else if (state == PlayerStates::ATTACK) {
 		if (!current_animation->getPlaying()) {
 			attacking = false;
-			// Set collider true;
+			sword.setCollider(true);
 			state = PlayerStates::ATTACK_RETURN;
 		}
 	}
 	else if (state == PlayerStates::ATTACK_RETURN) 
 	{
-		//Set collider false
+		sword.setCollider(false);
 		// TODO: make the animation breakable
 		if (!current_animation->getPlaying()) {
 			if (velocity.y == 0) {
@@ -125,7 +123,7 @@ void Player::updateState() {
 	
 		if (attacking) {
 			state = PlayerStates::JUMP_ATTACK;
-			//Set collider on
+			sword.setCollider(true);
 		}
 		else if (velocity.y >= 0) {
 			state = PlayerStates::FALL;
@@ -134,7 +132,7 @@ void Player::updateState() {
 	else if (state == PlayerStates::FALL) {
 	    if (attacking) {
 			state = PlayerStates::JUMP_ATTACK;
-			//Set collider on
+			sword.setCollider(true);
 		}
 		else if (velocity.y == 0) {
 			state = PlayerStates::GROUNDED;
@@ -142,39 +140,13 @@ void Player::updateState() {
 	}
 	else if (state == PlayerStates::JUMP_ATTACK) {
 
-		//Set collider off
+		sword.setCollider(false);
 		attacking = false;
 		if (velocity.y == 0) {
 			state = PlayerStates::GROUNDED;
 
 		}
 	}
-
-
-
-	/*if ((falling)&&(velocity.y == 0)) {
-
-		falling = false;
-		landed = true;
-	}
-	else if ((landed) && (velocity.y < 0)) {
-
-		landed = false;
-		falling = false;
-	}
-	else if ((landed) && (velocity.y > 0)) {
-		
-		falling = true;
-		landed = false;
-	}
-	else if ((!falling) && (!landed) && (velocity.y >= 0)) {
-		landed = false;
-		falling = true;
-	}
-	else if ((landed) && (falling)) {
-
-		std::cout << "Error! Landed and Falling" << std::endl;
-	}*/
 
 	velocity.x = 0;
 	jump_hold_acceleration.y = 0;
@@ -231,25 +203,30 @@ void Player::handleInput(float dt) {//Handles Player Inputs by applying force to
 
 void Player::update(float dt) {
 
-	
+	// After handling input
+
+	// Update movement
 	sf::Vector2f offset_pos = velocity*dt + 0.5f * (gravity + jump_hold_acceleration)*dt*dt;
 	velocity += (gravity + jump_hold_acceleration)* dt;
 	// setPosition(getPosition() + offset_pos);
-
-
-	// Applies vertical and horizontal forces to the character
-	if (velocity != sf::Vector2f(0, 0)) {
+	
+	if (velocity != sf::Vector2f(0, 0)) { 
+		// Applies vertical and horizontal forces to the character
 		move(velocity.x * dt, velocity.y * dt);
 	}
 
-	//Update sword CollisionBox coordonates
-	/*if (!current_animation->getFlipped()) {
-		sword.setCollisionBox(getCollisionBox().left + getCollisionBox().width, getCollisionBox().top, SWORD_WIDTH, getSize().y);
+	//Update sword (if it is active)
+
+	if (sword.isCollider()) {
+		if (current_animation->getFlipped()) {
+			sword.setPosition(getPosition().x - sword.getSize().x + getSize().x, getPosition().y);
+		}
+		else {
+			sword.setPosition(getPosition().x, getPosition().y);
+		}
+
 	}
-	else sword.setCollisionBox(getCollisionBox().left - SWORD_WIDTH, getCollisionBox().top, SWORD_WIDTH, -getSize().y);*/
-
-
-	// Update sprite and animations depenging on states
+	// Update sprite and animations
 	current_animation->animate(dt);
 	handleAnimation();
 }

@@ -6,7 +6,8 @@
 
 Imp::Imp() {
 
-	collision_layer == CollisionLayer::ENEMY;
+	
+	collision_layer = CollisionLayer::ENEMY;
 	//initialise object variables
 	can_attack = false;
 	can_tornado = false;
@@ -15,7 +16,7 @@ Imp::Imp() {
 	setSize(sf::Vector2f(IMP_WIDTH*scale_factor, IMP_HEIGHT*scale_factor));
 	sprite.setSize(getSize());
 	setCollisionBox(-detection_radius,-(TORNADO_SIZE+getSize().y) ,detection_radius*2+getSize().x, TORNADO_SIZE + getSize().y*2);
-	setCollider(true);
+	setCollider(true); 
 	
 
 	// initialise physics variables
@@ -29,7 +30,7 @@ Imp::Imp() {
 	handleAnimation();
 	AssignAnimation(idle, true);
 	sprite.setPosition(500, -200);
-	state == ImpStates::IDLE;
+	state = ImpStates::IDLE;
 
 
 }
@@ -44,6 +45,7 @@ void Imp::update(float dt) {
 	updateState();
 	current_animation->animate(dt);
 	handleAnimation();
+
 
 }
 
@@ -100,7 +102,7 @@ void Imp::collisionResponse(GameObject* gameobject) {
 	sf::Vector2f gameobject_pos = gameobject->getPosition();
 	float  gameobject_mid = gameobject_pos.x + gameobject_size.x / 2;
 	float imp_sprite_right = sprite.getPosition().x + sprite.getSize().x;
-	float imp_sprite_left = sprite.getPosition().x - sprite.getSize().x;
+	float imp_sprite_left = sprite.getPosition().x;
 	float imp_sprite_bottom = sprite.getPosition().y+sprite.getSize().y;
 	float imp_sprite_top = sprite.getPosition().y;
 	float gameobject_top = gameobject_pos.y;
@@ -136,8 +138,12 @@ void Imp::collisionResponse(GameObject* gameobject) {
 	}
 	if (gameobject->collision_layer == CollisionLayer::SWORD) {
 
-		//GETHIT
-	}
+			
+			std::cout<<"AAAAAGH"<<std::endl;
+		}
+
+		
+	
 
 }
 

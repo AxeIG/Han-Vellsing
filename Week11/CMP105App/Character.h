@@ -1,6 +1,8 @@
 #pragma once
 #include"Framework/GameObject.h"
 #include"Framework/Animation.h"
+#include "Framework/Collision.h"
+#include<vector>
 class Character:
 	public GameObject
 {
@@ -20,6 +22,7 @@ public:
 	int  getHealth();
 
 
+	static std::vector<Character*> characters;
 	float scale_factor = 2.f;
 	int health;
 	GameObject sprite;

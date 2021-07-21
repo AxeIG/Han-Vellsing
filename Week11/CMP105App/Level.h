@@ -31,7 +31,8 @@ private:
 
 	Player* player;
 	Imp* imp;
-	sf::RectangleShape player_box/*, sword_box*/;
+
+	sf::RectangleShape player_box, sword_box;
 	sf::View view;
 	GameObject wall1 = GameObject();
 	GameObject ground_axis = GameObject();

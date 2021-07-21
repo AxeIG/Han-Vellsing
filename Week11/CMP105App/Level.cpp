@@ -16,7 +16,6 @@ Level::Level(sf::RenderWindow* hwnd, Input* in, GameState* gs, AudioManager* aud
 	background->setSize(sf::Vector2f(1200, 675));
 
 	//background->setPosition(70, -352);
-	
 
 
 	/*layer1.setSize(sf::Vector2f(512, 352));
@@ -49,14 +48,14 @@ Level::Level(sf::RenderWindow* hwnd, Input* in, GameState* gs, AudioManager* aud
 	player->setInput(input);
 
 	imp = new Imp();
-	imp->setPosition(512 , -200);
+	imp->setPosition(512 , -410);
 
 	//collision boxes checkup
 	player_box.setSize(sf::Vector2f(imp->getCollisionBox().width, imp->getCollisionBox().height));
 	player_box.setFillColor(sf::Color::Red);
 
-	//sword_box.setSize(sf::Vector2f(player.getSword().width, player.getSword().height));
-	//sword_box.setFillColor(sf::Color::Blue);
+	sword_box.setSize(sf::Vector2f(player->sword.getSize()));
+	sword_box.setFillColor(sf::Color::Blue);
 }
 
 Level::~Level()
@@ -88,12 +87,12 @@ void Level::handleInput(float dt)
 // Update game objects
 void Level::update(float dt)
 {
-	
-	background->updateTextureCoordinates(dt);
+	// Update the characters
 	player->update(dt);
 	imp->update(dt);
-	//sword_box.setPosition(player.getSword().left, player.getSword().top);
 
+	// COLLISION HANDLING
+	// Collisions:: Player <-> map
 	for (int i = 0; i < world_map->size(); i++){
 		if ((*world_map)[i].isCollider()) {
 			if (Collision::checkBoundingBox(player, &(*world_map)[i])) {
@@ -102,9 +101,28 @@ void Level::update(float dt)
 			}
 		}
 	}
+
+	// Collisions:: Player <-> imp	
+	if (Collision::checkBoundingBox(player, imp)) {
+
+		imp->collisionResponse(player);
+	}
+	if (player->sword.isCollider()) {
+		if (player->sword.collision_layer == CollisionLayer::SWORD) {
+			std::cout << "I AM A SWORD" << std::endl;
+	}
+		std::cout << "I CAN CUT" << std::endl;
+		if (Collision::checkBoundingBox(&player->sword, &imp->sprite)) {
+			std::cout << "I HAVE CUT IMP"<<std::endl;
+			imp->collisionResponse(&player->sword);
+		}
+	}
+
+	// thingy thangs
 	player_box.setPosition(imp->getCollisionBox().left, imp->getCollisionBox().top);
 
 
+	// Set View position depending on the Player position
 	if (player->getPosition().x <= view.getSize().x/2) {
 		view.setCenter(view.getCenter().x, player->getPosition().y - 150);
 	}
@@ -112,16 +130,15 @@ void Level::update(float dt)
 		view.setCenter(player->getPosition().x, player->getPosition().y - 150);
 	}
 	window->setView(view);
+
+	// Set the Backgrounds at the centre of the new View position
+	background->updateTextureCoordinates(dt);
 	background->setPosition(view.getCenter().x-view.getSize().x/2, view.getCenter().y-view.getSize().y/2);
 	layer2.setPosition(view.getCenter().x - view.getSize().x / 2, view.getCenter().y-layer2.getSize().y/2);
+
 	
-	if (Collision::checkBoundingBox(imp, player)) {
-
-		imp->collisionResponse(player);
-	}
-
-	//std::cout << player->getPosition().x << " " << player->getPosition().y << std::endl;
-
+	sword_box.setPosition(player->sword.getPosition());
+	// Update states
 	player->updateState();
 }
 
@@ -138,7 +155,7 @@ void Level::render()
 	window->draw((*player));
 	window->draw((*imp));
 	window->draw((imp->sprite));
-	//window->draw(sword_box);
+	window->draw(sword_box);
 	window->draw(player->sprite);
 
 

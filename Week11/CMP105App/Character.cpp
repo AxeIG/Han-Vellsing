@@ -40,7 +40,7 @@ void Character::AssignAnimation(Animation& animation, bool looping) {
 	int new_y_position = getPosition().y - sprite.getSize().y + getSize().y;
 	sprite.setPosition(new_x_position, new_y_position);
 	sprite.setTextureRect(current_animation->getCurrentFrame());
-
+	sprite.setCollisionBox(0, 0, abs(frame_rectangle.width * scale_factor), abs(frame_rectangle.height * scale_factor));
 }
 
 void Character::initialiseAnimations() {
