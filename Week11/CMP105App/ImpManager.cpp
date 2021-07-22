@@ -7,6 +7,7 @@ ImpManager::ImpManager()
 	imp_template = Imp();
 	imp_template.setAlive(true);
 	imp_template.sprite.setTexture(&imp_texture);
+	
 }
 
 ImpManager::~ImpManager()
@@ -37,14 +38,16 @@ void ImpManager::update(float dt)
 {
 	for (int i = 0; i < imps.size(); i++)
 	{
-
 		if (imps[i].isAlive()) {
 			imps[i].update(dt);
 			if (imps[i].shouldSpawnFireball()) {
-				std::cout << "FIRE AT `IM" << std::endl;
+				
+				std::cout << "I SHOULD SPAWN" << std::endl;
+				fireball_manager.spawn(imps[i].getPosition().x, imps[i].getPosition().y, imps[i].getVelocity().x);
 			}
 		}
 	}
+	fireball_manager.update(dt);
 }
 
 void ImpManager::render(sf::RenderWindow* window)
@@ -56,7 +59,8 @@ void ImpManager::render(sf::RenderWindow* window)
 			window->draw(imps[i].sprite);
 		}
 	}
-
+	//Fireball should be over the imp layer
+	fireball_manager.render(window);
 }
 
 

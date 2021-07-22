@@ -287,9 +287,14 @@ void Player::collisionResponse(GameObject* gameobject) {
 
 	else if (gameobject->collision_layer == CollisionLayer::FIRE) {
 
-		--health;
-		std::cout << "oof" << std::endl;
+		health-=0.25;
+		std::cout << health << " ";
 		
+	}
+	else if (gameobject->collision_layer == CollisionLayer::PROJECTILE) {
+
+		health -= 5;
+		std::cout << health << " ";
 	}
 		
 

@@ -161,6 +161,8 @@
     <ClCompile Include="Character.cpp" />
     <ClCompile Include="ControlsMenu.cpp" />
     <ClCompile Include="Enemy.cpp" />
+    <ClCompile Include="FireBall.cpp" />
+    <ClCompile Include="FireBallManager.cpp" />
     <ClCompile Include="Framework\Animation.cpp" />
     <ClCompile Include="Framework\AudioManager.cpp" />
     <ClCompile Include="Framework\BaseLevel.cpp" />
@@ -190,6 +192,8 @@
     <ClInclude Include="Character.h" />
     <ClInclude Include="ControlsMenu.h" />
     <ClInclude Include="Enemy.h" />
+    <ClInclude Include="FireBall.h" />
+    <ClInclude Include="FireBallManager.h" />
     <ClInclude Include="Framework\Animation.h" />
     <ClInclude Include="Framework\AudioManager.h" />
     <ClInclude Include="Framework\BaseLevel.h" />

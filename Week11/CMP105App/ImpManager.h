@@ -1,5 +1,6 @@
 #pragma once
 #include "Imp.h"
+#include "FireBallManager.h"
 
 class ImpManager{
 
@@ -15,9 +16,11 @@ public:
 	void render(sf::RenderWindow* window);
 	void checkCollisions(GameObject* gameobject);
 	std::vector<Imp>* getImps() { return &imps; }
+	FireBallManager* getFireballManager(){ return &fireball_manager; }
 
 private:
 
+	FireBallManager fireball_manager;
 	std::vector<Imp> imps;
 	sf::Texture imp_texture;
 	Imp imp_template;

@@ -14,7 +14,7 @@ Level::Level(sf::RenderWindow* hwnd, Input* in, GameState* gs, AudioManager* aud
 
 	level_name = LevelName::LEVEL1;
 	// initialise game objects
-	imp_manager.spawn(512, -150);
+	imp_manager.spawn(512, -110);
 	imp_manager.spawn(1150, -300);
 	imp_manager.spawn(1300, -400);
 
@@ -87,6 +87,19 @@ void Level::update(float dt)
 		}
 	}
 	if (player->isAlive()) {
+
+		//collision:: Player <-> fireBall
+		std::vector<FireBall>* fireballs = imp_manager.getFireballManager()->getFireBalls();
+		for (int i = 0; i < fireballs->size(); i++)
+		{
+			if ((*fireballs)[i].isAlive()) {
+				if (Collision::checkBoundingBox(player, &(*fireballs)[i])) {
+
+					player->collisionResponse(&(*fireballs)[i]);
+					(*fireballs)[i].collisionResponse(player);
+				}
+			}
+		}
 
 		//Collision:: Player <-> Imps Sprites
 		std::vector<Imp>* imps = imp_manager.getImps();

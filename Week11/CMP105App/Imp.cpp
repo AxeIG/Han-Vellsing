@@ -21,7 +21,8 @@ Imp::Imp() {
 	
 
 	// initialise physics variables
-	velocity = sf::Vector2f(0, 0);
+	velocity = sf::Vector2f(-1, 0);
+	setVelocity(velocity);
 
 
 	
@@ -57,7 +58,7 @@ void Imp::updateState() {
 
 			//setDamageColliderON
 			state = ImpStates::TORNADO_RETURN;
-			std::cout << "/////////////////";
+			
 
 		}
 	}
@@ -142,7 +143,8 @@ void Imp::collisionResponse(GameObject* gameobject) {
 	if (gameobject->collision_layer == CollisionLayer::SWORD) {
 	
 		if (Collision::checkBoundingBox(gameobject, &sprite)) {
-			std::cout << "AAAAAGH" << std::endl;
+			
+			setAlive(false);
 		}
 	}
 }
@@ -182,7 +184,7 @@ void Imp::initialiseAnimations() {
 	attack.addFrame(sf::IntRect(  0, 135, 64, 64));
 	attack.addFrame(sf::IntRect( 64, 135, 64, 64));
 	attack.addFrame(sf::IntRect(128, 135, 64, 64));
-	attack.setFrameSpeed(1/8.f);
+	attack.setFrameSpeed(1/6.f);
 
 
 	tornado_attack.addFrame(sf::IntRect(0, 198 + 100, 74, 160 - 100)); // no tornado cut top 100 pixels of sprite

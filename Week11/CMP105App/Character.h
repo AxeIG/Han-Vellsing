@@ -20,10 +20,10 @@ public:
 
 	void setHealth(int health);
 	int  getHealth();
-
+	
 
 	float scale_factor = 2.f;
-	int health;
+	float health;
 	GameObject sprite;
 	sf::Texture texture;
 	Animation* current_animation;

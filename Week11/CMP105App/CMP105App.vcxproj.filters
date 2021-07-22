@@ -31,7 +31,7 @@
     <Filter Include="Header Files\Menu">
       <UniqueIdentifier>{439b5bce-bd67-48a5-b02b-cb612a63dd92}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Enteteties">
+    <Filter Include="Header Files\Entities">
       <UniqueIdentifier>{1814f860-6744-4900-8494-0eed163412f3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -105,6 +105,12 @@
     <ClCompile Include="ImpManager.cpp">
       <Filter>Source Files\Entities</Filter>
     </ClCompile>
+    <ClCompile Include="FireBall.cpp">
+      <Filter>Source Files\Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="FireBallManager.cpp">
+      <Filter>Source Files\Entities</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="README.txt">
@@ -167,19 +173,25 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Player.h">
-      <Filter>Header Files\Enteteties</Filter>
+      <Filter>Header Files\Entities</Filter>
     </ClInclude>
     <ClInclude Include="Enemy.h">
-      <Filter>Header Files\Enteteties</Filter>
+      <Filter>Header Files\Entities</Filter>
     </ClInclude>
     <ClInclude Include="Imp.h">
-      <Filter>Header Files\Enteteties</Filter>
+      <Filter>Header Files\Entities</Filter>
     </ClInclude>
     <ClInclude Include="Character.h">
-      <Filter>Header Files\Enteteties</Filter>
+      <Filter>Header Files\Entities</Filter>
     </ClInclude>
     <ClInclude Include="ImpManager.h">
-      <Filter>Header Files\Enteteties</Filter>
+      <Filter>Header Files\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="FireBall.h">
+      <Filter>Header Files\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="FireBallManager.h">
+      <Filter>Header Files\Entities</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

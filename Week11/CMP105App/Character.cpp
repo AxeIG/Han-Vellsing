@@ -33,7 +33,7 @@ void Character::AssignAnimation(Animation& animation, bool looping) {
 	current_animation->setFlipped((velocity.x < 0 && velocity.x != 0) || (velocity.x == 0 && is_flipped));
 
 	// Depends on Animation being handled beforehand
-	// Keeps sprite centered to the center of the player
+	// Keeps sprite centered to the center of the character
 	sf::IntRect frame_rectangle = current_animation->getCurrentFrame();
 	sprite.setSize(sf::Vector2f(abs(frame_rectangle.width*scale_factor), abs(frame_rectangle.height*scale_factor)));
 	int new_x_position = getPosition().x - sprite.getSize().x / 2 + getSize().x / 2;
