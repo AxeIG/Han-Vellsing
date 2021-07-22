@@ -9,4 +9,7 @@ class Map :
 public:
 	Map();
 
+	int getMapLength() { return length; }
+	sf::Vector2f getPosition() { return position; }
+	int length;
 };

@@ -1,6 +1,6 @@
 #include "ControlsMenu.h"
 
-ControlsMenu::ControlsMenu(sf::RenderWindow* hwnd, Input* in, GameState* gs, AudioManager* aud) :
+TutorialMenu::TutorialMenu(sf::RenderWindow* hwnd, Input* in, GameState* gs, AudioManager* aud) :
 	BaseLevel()
 {
 	window = hwnd;
@@ -23,29 +23,40 @@ ControlsMenu::ControlsMenu(sf::RenderWindow* hwnd, Input* in, GameState* gs, Aud
 
 }
 
-ControlsMenu::~ControlsMenu() {
+TutorialMenu::~TutorialMenu() {
 
 }
 
-void ControlsMenu::handleInput(float dt) {
+void TutorialMenu::handleInput(float dt) {
 
 	if (input->isLeftMouseDown()) {
 
 		if (Collision::checkBoundingBox(&exit_button, static_cast<sf::Vector2i>(global_mouse_pos))) {
 			gameState->setCurrentState(State::MAIN_MENU);
+			input->setLeftMouse(Input::MouseState::UP);
 		}
 	}
 	
 }
 
 
-void ControlsMenu::update(float dt) {
+void TutorialMenu::update(float dt) {
 
-	background.setSize(sf::Vector2f(static_cast<sf::Vector2f>(window->getSize())));
+	sf::Vector2f viewSize = window->getView().getSize();
+	sf::Vector2f viewCenter = window->getView().getCenter();
+
+
+	//background.setSize(sf::Vector2f(static_cast<sf::Vector2f>(window->getSize())));
+	background.setSize(viewSize);
+	background.setPosition(viewCenter.x - viewSize.x / 2, viewCenter.y - viewSize.y / 2);
+
+	//sf::Vector2f camera_center = window->getView().getCenter();
+	exit_button.setPosition(viewCenter.x - exit_button.getSize().x / 2, viewCenter.y - exit_button.getSize().y / 2);
+
 }
 
 
-void ControlsMenu::render() {
+void TutorialMenu::render() {
 
 	beginDraw();
 	window->draw(background);

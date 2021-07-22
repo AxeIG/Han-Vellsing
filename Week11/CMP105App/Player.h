@@ -6,7 +6,7 @@ class Player:
 	public Character
 {
 public:
-	enum class PlayerStates{GROUNDED, JUMP, ATTACK, JUMP_ATTACK, ATTACK_RETURN, FALL};
+	enum class PlayerStates{GROUNDED, JUMP, ATTACK, JUMP_ATTACK, ATTACK_RETURN, FALL, DEAD};
 	Player();
 	Player(float x, float y);
 	~Player();

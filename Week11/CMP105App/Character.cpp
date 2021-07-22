@@ -7,7 +7,7 @@ Character::Character() {
 
 Character::~Character() {
 
-
+	
 }
 
 void Character::update(float dt) {

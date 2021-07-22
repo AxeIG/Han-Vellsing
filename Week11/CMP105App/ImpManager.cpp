@@ -12,26 +12,29 @@ ImpManager::ImpManager()
 
 ImpManager::~ImpManager()
 {
-	imps.clear();
+	//std::cout << "Deconstructing imp" << std::endl;
+	
+	
 }
 
 void ImpManager::spawn(int x, int y)
 {
 	imp_template.setPosition(x, y);
 	//replaces the first dead imp with a new one
+
+	int i = 0;
 	for (int i = 0; i < imps.size(); i++)
 	{
 		if (!imps[i].isAlive()) {
 		
 			imps[i].setPosition(x, y);
-			imps[i].setAlive(true);;
+			imps[i].setAlive(true);
 			return;
 		}
 		
 	}
 	//if no dead imp was found
 	imps.push_back(imp_template);
-
 }
 
 void ImpManager::update(float dt)
@@ -42,12 +45,12 @@ void ImpManager::update(float dt)
 			imps[i].update(dt);
 			if (imps[i].shouldSpawnFireball()) {
 				
-				std::cout << "I SHOULD SPAWN" << std::endl;
 				fireball_manager.spawn(imps[i].getPosition().x, imps[i].getPosition().y, imps[i].getVelocity().x);
 			}
 		}
 	}
 	fireball_manager.update(dt);
+
 }
 
 void ImpManager::render(sf::RenderWindow* window)
@@ -76,6 +79,16 @@ void ImpManager::checkCollisions(GameObject* gameobject)
 		}
 
 	}
+}
+
+bool ImpManager::areAllImpsDead()
+{
+	for (int i = 0; i < imps.size(); i++) {
+		if (imps[i].isAlive()) {
+			return false;
+		}
+	}
+	return true;
 }
 
 

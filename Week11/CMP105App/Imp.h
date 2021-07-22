@@ -15,7 +15,6 @@ enum class ImpStates{IDLE, ATTACK, TORNADO_ATTACK,TORNADO_RETURN, DEAD};
     void handleAnimation() override;
     void initialiseAnimations() override;
     void updateState() override;
-    void checkPlayer(GameObject player);
     bool shouldSpawnFireball();
     void collisionResponse(GameObject* gameobject) override;
 

@@ -6,11 +6,9 @@
 Map::Map() {
 
 	texture.loadFromFile("gfx/tiles.png");
-
 	//SETUP values for tiles, textures and collison
 
 	//Initialise air tile (0)
-	
 	GameObject tile = GameObject();
 	tile.setSize(sf::Vector2f(TILE_SIZE, TILE_SIZE));
 	tile.setCollisionBox(0, 0, TILE_SIZE, TILE_SIZE);
@@ -18,7 +16,6 @@ Map::Map() {
 	tile.setTextureRect(sf::IntRect(CUT_SIZE, CUT_SIZE, CUT_SIZE, CUT_SIZE));
 	tileSet.push_back(tile);
 		
-
 	//Initialise long stone platform tile tile (1-5)
 	for (int i = 0; i < 5; i++)
 	{
@@ -31,7 +28,6 @@ Map::Map() {
 
 	}
 
-	
 	//Initialise brick ground tile (6-11)
 	for (int i = 0; i < 2; i++)
 	{
@@ -98,7 +94,7 @@ Map::Map() {
 	};
 
 	
-
+	length = mapDimensions.x * TILE_SIZE;
 	setPosition(sf::Vector2f(0, -static_cast<float>((mapDimensions.y+1) * TILE_SIZE)));
 	buildLevel();
 }

@@ -37,7 +37,6 @@ void FireBallManager::spawn(float x, float y, float direction)
 	}
 
 	fireballs.push_back(fireball_template);
-	std::cout << "RATATATATATATAATTATATATATATATATTATATATATATATAT";
 
 }
 

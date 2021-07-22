@@ -36,6 +36,7 @@ Imp::Imp() {
 
 Imp::~Imp() {
 
+	std::cout << "Deconstructing imp" << std::endl;
 
 }
 

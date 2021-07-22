@@ -81,16 +81,13 @@ void Player::updateState() {
 	if ((state == PlayerStates::GROUNDED)) {
 		//std::cout << "I AM UPDATING" << std::endl;
 		if (velocity.y > 0) {
-			std::cout << "FALL" << std::endl;
 			state = PlayerStates::FALL;
 		}
 		else if (velocity.y < 0) {
-			std::cout << "JUMP" << std::endl;
 
 			state = PlayerStates::JUMP;
 		}
 		else if (attacking) {
-			std::cout << "ATTACK" << std::endl;
 
 			state = PlayerStates::ATTACK;
 		}
@@ -157,7 +154,9 @@ void Player::updateState() {
 
 void Player::handleInput(float dt) {//Handles Player Inputs by applying force to the character based on the pressed key
 
-
+	if (input->isKeyDown(sf::Keyboard::K)) {
+		setAlive(false);
+	}
 	if (input->isKeyDown(sf::Keyboard::Enter)) {
 
 			attacking = true;
@@ -202,6 +201,11 @@ void Player::handleInput(float dt) {//Handles Player Inputs by applying force to
 }
 
 void Player::update(float dt) {
+
+	// Death Check
+	if (getPosition().y > 200) {
+		setAlive(false);
+	}
 
 	// After handling input
 
@@ -287,17 +291,29 @@ void Player::collisionResponse(GameObject* gameobject) {
 
 	else if (gameobject->collision_layer == CollisionLayer::FIRE) {
 
-		health-=0.25;
-		std::cout << health << " ";
+		if (isAlive()) {
+			health -= 0.25;
+			
+			if (health <= 0) {
+				health = 0;
+				setAlive(false);
+			}
+		}
 		
 	}
 	else if (gameobject->collision_layer == CollisionLayer::PROJECTILE) {
 
-		health -= 5;
-		std::cout << health << " ";
+		if (isAlive()) {
+			health -= 100;
+			
+			if (health <= 0) {
+				health = 0;
+				setAlive(false);
+			}
+		}
 	}
 		
-
+	
 }
 
 
@@ -329,36 +345,7 @@ void Player::handleAnimation() {
 			AssignAnimation(idle, true);
 		}
 	}
-	/*if (jump_attacking && !landed) {
-
-		if (current_animation != &jump_attack) {
-		
-		}
-		AssignAnimation(jump_attack, false);
-
-	}
-	else if (jump_attacking) {
-
-		jump_attacking = false;
-	}
-	else if (attacking) {
-
-		if (!current_animation->getPlaying()) {
-			attacking = false;
-		}
-		AssignAnimation(attack, false);
-	}
-	else if ((landed) && (velocity.x != 0)) {
-
-		std::cout << "I SHOULD WALK" << std::endl;
-		AssignAnimation(walk, true);
-	}
-	else if ((!landed) && (current_animation != &jump_attack)) {
-		AssignAnimation(jump, false);
-	}
-	else{
-		AssignAnimation(idle, true);
-	}*/
+	
 
 }
 

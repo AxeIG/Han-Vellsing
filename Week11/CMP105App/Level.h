@@ -31,6 +31,7 @@ private:
 	// Default variables for level class.
 
 	Player* player;
+	Background* background;
 
 	ImpManager imp_manager;
 	sf::RectangleShape sword_box;
@@ -38,15 +39,11 @@ private:
 	GameObject wall1 = GameObject();
 	GameObject ground_axis = GameObject();
 	Collision collision;
-	Map map;
-	std::vector<GameObject>* world_map;
-	GameObject layer1, layer2;
-	sf::Texture layer1_texture, layer2_texture, background_texture;
-	Background* background;
+	GameObject village_bg;
+	sf::Texture village_bg_texture, background_texture;
 
-
-
-	std::vector<Imp> enemies;
 	sf::Texture imp_texture;
 	 
+	Map map;
+	std::vector<GameObject>* world_map_assets;
 };

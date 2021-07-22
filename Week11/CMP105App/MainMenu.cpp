@@ -1,5 +1,5 @@
 #include "MainMenu.h"
-
+#define POSITION_PER_BUTTON 1.f/4.f
 MainMenu::MainMenu(sf::RenderWindow* hwnd, Input* in, GameState* gs, AudioManager* aud):
 	BaseLevel()
 {
@@ -39,6 +39,8 @@ MainMenu::MainMenu(sf::RenderWindow* hwnd, Input* in, GameState* gs, AudioManage
 	background.setTexture(&background_texture);
 	
 
+
+
 }
 
 MainMenu::~MainMenu() {
@@ -52,14 +54,15 @@ void MainMenu::handleInput(float dt) {
 
 		if (Collision::checkBoundingBox(&exit_button, static_cast<sf::Vector2i>(global_mouse_pos))) {
 			window->close();
+			input->setLeftMouse(Input::MouseState::UP);
 		}
 		else if (Collision::checkBoundingBox(&play_button, static_cast<sf::Vector2i>(global_mouse_pos))) {
 			gameState->setCurrentState(State::LEVEL);
-			std::cout << "LEVEL" << std::endl;
+			input->setLeftMouse(Input::MouseState::UP);
 		}
 		else if (Collision::checkBoundingBox(&controls_button, static_cast<sf::Vector2i>(global_mouse_pos))) {
-			gameState->setCurrentState(State::CONTROLS_MENU);
-			std::cout << "CONTROLS" << std::endl;
+			gameState->setCurrentState(State::TUTORIAL_MENU);
+			input->setLeftMouse(Input::MouseState::UP);
 
 		}
 	}
@@ -68,8 +71,19 @@ void MainMenu::handleInput(float dt) {
 
 void MainMenu::update(float dt) {
 
+	sf::Vector2f viewSize = window->getView().getSize();
+	sf::Vector2f viewCenter = window->getView().getCenter();
 
-	background.setSize(sf::Vector2f(static_cast<sf::Vector2f>(window->getSize())));
+	int gap = POSITION_PER_BUTTON * viewSize.y;
+
+	//background.setSize(sf::Vector2f(static_cast<sf::Vector2f>(window->getSize())));
+	background.setSize(viewSize);
+	background.setPosition(viewCenter.x - viewSize.x / 2, viewCenter.y - viewSize.y / 2);
+
+	//sf::Vector2f camera_center = window->getView().getCenter();
+	exit_button.setPosition(viewCenter.x - exit_button.getSize().x/2, viewCenter.y - exit_button.getSize().y/2 + gap * 1);
+	play_button.setPosition(viewCenter.x - exit_button.getSize().x/2, viewCenter.y- play_button.getSize().y/2 - gap * 1);
+	controls_button.setPosition(viewCenter.x - exit_button.getSize().x/2, viewCenter.y - controls_button.getSize().y/2 );
 }
 
 

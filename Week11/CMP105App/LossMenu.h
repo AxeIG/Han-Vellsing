@@ -7,18 +7,19 @@
 #include <string>
 #include <iostream>
 
-
-class PauseMenu :
+class LossMenu :
 	public BaseLevel
 {
 public:
-	PauseMenu(sf::RenderWindow* hwnd, Input* in, GameState* gs, AudioManager* aud);
-	~PauseMenu();
+	LossMenu(sf::RenderWindow* hwnd, Input* in, GameState* gs, AudioManager* aud);
+	~LossMenu();
 
 	void handleInput(float dt) override;
 	void update(float dt) override;
 	void render() override;
 
 private:
-	GameObject main_menu_button, resume_button;
+	GameObject main_menu_button, restart_button;
+	sf::Texture main_menu_texture, restart_texture;
+
 };

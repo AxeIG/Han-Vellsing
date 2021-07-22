@@ -177,11 +177,13 @@
     <ClCompile Include="Imp.cpp" />
     <ClCompile Include="ImpManager.cpp" />
     <ClCompile Include="Level.cpp" />
+    <ClCompile Include="LossMenu.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="PauseMenu.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="CreditsMenu.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="DO_NOT_EDIT.txt" />
@@ -208,10 +210,12 @@
     <ClInclude Include="Imp.h" />
     <ClInclude Include="ImpManager.h" />
     <ClInclude Include="Level.h" />
+    <ClInclude Include="LossMenu.h" />
     <ClInclude Include="MainMenu.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="PauseMenu.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="CreditsMenu.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

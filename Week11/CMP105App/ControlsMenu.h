@@ -8,13 +8,13 @@
 #include <iostream>
 
 
-class ControlsMenu :
+class TutorialMenu :
 	public BaseLevel
 {
 public:
 
-	ControlsMenu(sf::RenderWindow* hwnd, Input* in, GameState* gs, AudioManager* aud);
-	~ControlsMenu();
+	TutorialMenu(sf::RenderWindow* hwnd, Input* in, GameState* gs, AudioManager* aud);
+	~TutorialMenu();
 
 	void handleInput(float dt) override;
 	void update(float dt) override;
