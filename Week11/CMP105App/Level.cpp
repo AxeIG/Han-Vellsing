@@ -51,6 +51,7 @@ void Level::handleInput(float dt)
 	else if (input->isKeyDown(sf::Keyboard::F)) {
 		gameState->setCurrentState(State::CREDITS_MENU);
 	}
+	
 }
 
 // Update game objects

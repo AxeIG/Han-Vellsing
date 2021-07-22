@@ -19,7 +19,7 @@ public:
 	void render() override;
 
 private:
-	GameObject main_menu_button, restart_button;
-	sf::Texture main_menu_texture, restart_texture;
+	GameObject main_menu_button, restart_button, you_died_text;
+	sf::Texture main_menu_texture, restart_texture, you_died_text_texture;
 
 };

@@ -12,6 +12,13 @@ CreditsMenu::CreditsMenu(sf::RenderWindow* hwnd, Input* in, GameState* gs, Audio
 	main_menu_button.setFillColor(sf::Color::Magenta);
 	main_menu_button.setCollider(true);
 	main_menu_button.setCollisionBox(0, 0, main_menu_button.getSize().x, main_menu_button.getSize().y);
+	main_menu_texture.loadFromFile("gfx/MainMenuButton.png");
+	main_menu_button.setTexture(&main_menu_texture);
+
+	you_won_text.setSize(sf::Vector2f(448, 40));
+	you_won_texture.loadFromFile("gfx/you_won.png");
+	you_won_text.setTexture(&you_won_texture);
+
 }
 
 CreditsMenu::~CreditsMenu() {
@@ -39,14 +46,20 @@ void CreditsMenu::handleInput(float dt) {
 
 void CreditsMenu::update(float dt) {
 
+	sf::Vector2f viewSize = window->getView().getSize();
+	sf::Vector2f viewCenter = window->getView().getCenter();
+
+
 	sf::Vector2f camera_center = window->getView().getCenter();
 	main_menu_button.setPosition(camera_center.x - main_menu_button.getSize().x / 2, camera_center.y - main_menu_button.getSize().y);
+
+	you_won_text.setPosition(viewCenter.x - you_won_text.getSize().x / 2, viewCenter.y - viewSize.y / 2 + you_won_text.getSize().y);
 }
 
 
 void CreditsMenu::render() {
 
-	beginDraw();
+	window->draw(you_won_text);
 	window->draw(main_menu_button);
 	endDraw();
 }

@@ -32,7 +32,7 @@ MainMenu::MainMenu(sf::RenderWindow* hwnd, Input* in, GameState* gs, AudioManage
 	//controls_button.setFillColor(sf::Color::Red);
 	controls_button.setCollider(true);
 	controls_button.setCollisionBox(0, 0, exit_button.getSize().x, exit_button.getSize().y);
-	controls_texture.loadFromFile("gfx/ControlsButton.png");
+	controls_texture.loadFromFile("gfx/TutorialButton.png");
 	controls_button.setTexture(&controls_texture);
 
 	background_texture.loadFromFile("gfx/MainMenu.png");

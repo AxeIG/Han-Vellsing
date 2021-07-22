@@ -21,4 +21,5 @@ public:
 
 private:
 	GameObject main_menu_button, resume_button;
+	sf::Texture main_menu_texture, resume_texture;
 };

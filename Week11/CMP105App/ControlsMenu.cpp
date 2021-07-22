@@ -18,9 +18,9 @@ TutorialMenu::TutorialMenu(sf::RenderWindow* hwnd, Input* in, GameState* gs, Aud
 	exit_texture.loadFromFile("gfx/ExitButton.png");
 	exit_button.setTexture(&exit_texture);
 
-	background_texture.loadFromFile("gfx/ControlsBackground.png");
+	background_texture.loadFromFile("gfx/TutorialScreen.png");
 	background.setTexture(&background_texture);
-
+	
 }
 
 TutorialMenu::~TutorialMenu() {

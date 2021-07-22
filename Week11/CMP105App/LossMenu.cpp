@@ -7,6 +7,12 @@ LossMenu::LossMenu(sf::RenderWindow* hwnd, Input* in, GameState* gs, AudioManage
 	gameState = gs;
 	audio = aud;
 
+
+	you_died_text.setSize(sf::Vector2f(448, 40));
+	you_died_text_texture.loadFromFile("gfx/you_died.png");
+	you_died_text.setTexture(&you_died_text_texture);
+		
+
 	//Initialise menu buttons
 	restart_button.setSize(sf::Vector2f(200, 40));
 	restart_button.setFillColor(sf::Color::Green);
@@ -55,8 +61,9 @@ void LossMenu::update(float dt) {
 	
 
 	//sf::Vector2f camera_center = window->getView().getCenter();
-	main_menu_button.setPosition(viewCenter.x - main_menu_button.getSize().x / 2, viewCenter.y - main_menu_button.getSize().y / 2);
-
+	main_menu_button.setPosition(viewCenter.x - main_menu_button.getSize().x / 2, viewCenter.y + main_menu_button.getSize().y);
+	restart_button.setPosition(viewCenter.x - restart_button.getSize().x / 2, viewCenter.y - restart_button.getSize().y);
+	you_died_text.setPosition(viewCenter.x - you_died_text.getSize().x / 2, viewCenter.y - viewSize.y / 2 + you_died_text.getSize().y);
 
 }
 
@@ -64,7 +71,8 @@ void LossMenu::update(float dt) {
 void LossMenu::render() {
 
 	//beginDraw();
+	window->draw(you_died_text);
 	window->draw(main_menu_button);
-	//window->draw(restart_button);
+	window->draw(restart_button);
 	endDraw();
 }

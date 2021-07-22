@@ -11,17 +11,17 @@
 class CreditsMenu :
 	public BaseLevel 
 {
-	public:
-		CreditsMenu(sf::RenderWindow * hwnd, Input * in, GameState * gs, AudioManager * aud);
-		~CreditsMenu();
+public:
+	CreditsMenu(sf::RenderWindow * hwnd, Input * in, GameState * gs, AudioManager * aud);
+	~CreditsMenu();
 
-		void handleInput(float dt) override;
-		void update(float dt) override;
-		void render() override;
+	void handleInput(float dt) override;
+	void update(float dt) override;
+	void render() override;
 
-	private:
-		GameObject main_menu_button;
-		sf::Texture main_menu_texture;
+private:
+	GameObject main_menu_button, you_won_text;
+	sf::Texture main_menu_texture, you_won_texture;
 
 };
 
