@@ -173,6 +173,7 @@
     <ClCompile Include="Framework\TileMap.cpp" />
     <ClCompile Include="Framework\VectorHelper.cpp" />
     <ClCompile Include="Imp.cpp" />
+    <ClCompile Include="ImpManager.cpp" />
     <ClCompile Include="Level.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MainMenu.cpp" />
@@ -201,6 +202,7 @@
     <ClInclude Include="Framework\TileMap.h" />
     <ClInclude Include="Framework\VectorHelper.h" />
     <ClInclude Include="Imp.h" />
+    <ClInclude Include="ImpManager.h" />
     <ClInclude Include="Level.h" />
     <ClInclude Include="MainMenu.h" />
     <ClInclude Include="Map.h" />

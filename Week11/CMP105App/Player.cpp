@@ -240,8 +240,6 @@ void Player::collisionResponse(GameObject* gameobject) {
 
 	//Platform collsiion
 	if (gameobject->collision_layer == CollisionLayer::PLATFORM) {
-
-		
 		
 		//check if on top
 		//Dependend on platform origin point being 0,0 (top_left corner)
@@ -286,6 +284,15 @@ void Player::collisionResponse(GameObject* gameobject) {
 		}
 		
 	}
+
+	else if (gameobject->collision_layer == CollisionLayer::FIRE) {
+
+		--health;
+		std::cout << "oof" << std::endl;
+		
+	}
+		
+
 }
 
 

@@ -22,7 +22,6 @@ public:
 	int  getHealth();
 
 
-	static std::vector<Character*> characters;
 	float scale_factor = 2.f;
 	int health;
 	GameObject sprite;

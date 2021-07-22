@@ -9,50 +9,34 @@ Level::Level(sf::RenderWindow* hwnd, Input* in, GameState* gs, AudioManager* aud
 	gameState = gs;
 	audio = aud;
 
+	//Loading player spritesheet
 	
+
 	level_name = LevelName::LEVEL1;
 	// initialise game objects
+	imp_manager.spawn(512, -150);
+	imp_manager.spawn(1150, -300);
+	imp_manager.spawn(1300, -400);
+
 	background = new Background("gfx/MegaBigCloud.png", 0.03f, 2048, 704, 1024);
 	background->setSize(sf::Vector2f(1200, 675));
-
-	//background->setPosition(70, -352);
-
-
-	/*layer1.setSize(sf::Vector2f(512, 352));
-	layer1.setPosition(20, 0);
-	layer1_texture.loadFromFile("gfx/clouds.png");
-	layer1.setTexture(&layer1_texture);
-	layer1.setTextureRect(sf::IntRect(0, 0, 256, 176));*/
-
-
-	/*layer1_texture.loadFromFile("gfx/clouds.png");
-	layer1.setTexture(&layer1_texture);
-	layer1.setSize(sf::Vector2f(200, 200));
-	layer1.setPosition(0, -200);
-	layer1.setTextureRect(sf::IntRect(0, 0, 512, 176));*/
 
 	layer2_texture.loadFromFile("gfx/town.png");
 	layer2.setTexture(&layer2_texture);
 	layer2.setSize(sf::Vector2f(1200, 675));
 	layer2.setTextureRect(sf::IntRect(0,0,256,176));
 	layer2.setPosition(0,-675);
-	
 
 	view = window->getView();
 	audio->addMusic("sfx/cantina.ogg", "cantina");
 	audio->addMusic("sfx/Credits.ogg", "credits");
 	world_map = map.getLevel();
 
-
 	player =new Player(128, -250);
+	player->setAlive(true);
 	player->setInput(input);
 
-	imp = new Imp();
-	imp->setPosition(512 , -410);
-
-	//collision boxes checkup
-	player_box.setSize(sf::Vector2f(imp->getCollisionBox().width, imp->getCollisionBox().height));
-	player_box.setFillColor(sf::Color::Red);
+	
 
 	sword_box.setSize(sf::Vector2f(player->sword.getSize()));
 	sword_box.setFillColor(sf::Color::Blue);
@@ -63,6 +47,7 @@ Level::~Level()
 	//Manually destroying pointers
 	delete player;
 	delete background;
+	enemies.clear();
 }
 
 // handle user input
@@ -89,7 +74,7 @@ void Level::update(float dt)
 {
 	// Update the characters
 	player->update(dt);
-	imp->update(dt);
+	imp_manager.update(dt);
 
 	// COLLISION HANDLING
 	// Collisions:: Player <-> map
@@ -101,26 +86,49 @@ void Level::update(float dt)
 			}
 		}
 	}
+	if (player->isAlive()) {
 
-	// Collisions:: Player <-> imp	
-	if (Collision::checkBoundingBox(player, imp)) {
+		//Collision:: Player <-> Imps Sprites
+		std::vector<Imp>* imps = imp_manager.getImps();
+		for (int i = 0; i < imps->size(); i++) {
+			if ((*imps)[i].isAlive()) {
+				if (Collision::checkBoundingBox(player, &(*imps)[i].sprite)) {
 
-		imp->collisionResponse(player);
+					player->collisionResponse(&(*imps)[i].sprite);
+				}
+			}
+		}
+
+		// Collisions:: Imps <-> Player
+		imp_manager.checkCollisions(player);
 	}
 	if (player->sword.isCollider()) {
-		if (player->sword.collision_layer == CollisionLayer::SWORD) {
-			std::cout << "I AM A SWORD" << std::endl;
+
+		// Collision:: Imps <-> PlayerSword
+		imp_manager.checkCollisions(&player->sword);
 	}
-		std::cout << "I CAN CUT" << std::endl;
-		if (Collision::checkBoundingBox(&player->sword, &imp->sprite)) {
-			std::cout << "I HAVE CUT IMP"<<std::endl;
-			imp->collisionResponse(&player->sword);
+		
+
+
+
+
+	/*for (int i = 0; i < enemies.size(); i++)
+	{
+		if (Collision::checkBoundingBox(player, &(enemies[i]))) {
+			enemies[i].collisionResponse(player);
 		}
-	}
-
-	// thingy thangs
-	player_box.setPosition(imp->getCollisionBox().left, imp->getCollisionBox().top);
-
+		if (player->sword.isCollider()) {
+			if (player->sword.collision_layer == CollisionLayer::SWORD) {
+				std::cout << "I AM A SWORD" << std::endl;
+			}
+			std::cout << "I CAN CUT" << std::endl;
+			if (Collision::checkBoundingBox(&player->sword, &enemies[i].sprite)) {
+				std::cout << "I HAVE CUT IMP" << std::endl;
+				enemies[i].collisionResponse(&player->sword);
+			}
+		}
+	}*/
+	
 
 	// Set View position depending on the Player position
 	if (player->getPosition().x <= view.getSize().x/2) {
@@ -137,7 +145,6 @@ void Level::update(float dt)
 	layer2.setPosition(view.getCenter().x - view.getSize().x / 2, view.getCenter().y-layer2.getSize().y/2);
 
 	
-	sword_box.setPosition(player->sword.getPosition());
 	// Update states
 	player->updateState();
 }
@@ -151,10 +158,7 @@ void Level::render()
 	window->draw(*background);
 	window->draw(layer2);
 	map.render(window);
-	window->draw(player_box); 
-	window->draw((*player));
-	window->draw((*imp));
-	window->draw((imp->sprite));
+	imp_manager.render(window);
 	window->draw(sword_box);
 	window->draw(player->sprite);
 

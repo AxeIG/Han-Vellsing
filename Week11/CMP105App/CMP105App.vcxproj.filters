@@ -102,6 +102,9 @@
     <ClCompile Include="Character.cpp">
       <Filter>Source Files\Entities</Filter>
     </ClCompile>
+    <ClCompile Include="ImpManager.cpp">
+      <Filter>Source Files\Entities</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="README.txt">
@@ -173,6 +176,9 @@
       <Filter>Header Files\Enteteties</Filter>
     </ClInclude>
     <ClInclude Include="Character.h">
+      <Filter>Header Files\Enteteties</Filter>
+    </ClInclude>
+    <ClInclude Include="ImpManager.h">
       <Filter>Header Files\Enteteties</Filter>
     </ClInclude>
   </ItemGroup>

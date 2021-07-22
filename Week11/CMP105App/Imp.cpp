@@ -6,13 +6,14 @@
 
 Imp::Imp() {
 
-	
-	collision_layer = CollisionLayer::ENEMY;
+	collision_layer = CollisionLayer::NONE;
+	sprite.collision_layer = CollisionLayer::NONE;
 	//initialise object variables
 	can_attack = false;
 	can_tornado = false;
+
 	detection_radius = 128 * scale_factor;
-	setPosition(0, 0);
+
 	setSize(sf::Vector2f(IMP_WIDTH*scale_factor, IMP_HEIGHT*scale_factor));
 	sprite.setSize(getSize());
 	setCollisionBox(-detection_radius,-(TORNADO_SIZE+getSize().y) ,detection_radius*2+getSize().x, TORNADO_SIZE + getSize().y*2);
@@ -23,13 +24,10 @@ Imp::Imp() {
 	velocity = sf::Vector2f(0, 0);
 
 
-	//Loading player spritesheet
-	texture.loadFromFile("gfx/ImpSpritesheet.png");
-	sprite.setTexture(&texture);
+	
 	initialiseAnimations();
 	handleAnimation();
 	AssignAnimation(idle, true);
-	sprite.setPosition(500, -200);
 	state = ImpStates::IDLE;
 
 
@@ -42,6 +40,7 @@ Imp::~Imp() {
 
 void Imp::update(float dt) {
 
+	//std::cout <<"UPDATE" << std::endl;
 	updateState();
 	current_animation->animate(dt);
 	handleAnimation();
@@ -63,7 +62,6 @@ void Imp::updateState() {
 		}
 	}
 	else if (state == ImpStates::TORNADO_RETURN) {
-
 		//std::cout << "TORNADO_RETURN" << std::endl;
 		if (!current_animation->getPlaying()) {
 			//setDamageColliderOFF
@@ -96,6 +94,12 @@ void Imp::updateState() {
 	}
 
 }
+
+bool Imp::shouldSpawnFireball()
+{
+	return (state == ImpStates::ATTACK && !current_animation->getPlaying());
+}
+
 void Imp::collisionResponse(GameObject* gameobject) {
 
 	sf::Vector2f gameobject_size = gameobject->getSize();
@@ -125,7 +129,6 @@ void Imp::collisionResponse(GameObject* gameobject) {
 			if((gameobject_mid>= imp_sprite_left) && (gameobject_mid<= imp_sprite_right)) {
 
 			//FireTornado attack
-				std::cout << "SHOULD TORNADO" << std::endl;
 				can_tornado = true;
 			}
 		}
@@ -137,32 +140,30 @@ void Imp::collisionResponse(GameObject* gameobject) {
 		
 	}
 	if (gameobject->collision_layer == CollisionLayer::SWORD) {
-
-			
-			std::cout<<"AAAAAGH"<<std::endl;
-		}
-
-		
 	
-
+		if (Collision::checkBoundingBox(gameobject, &sprite)) {
+			std::cout << "AAAAAGH" << std::endl;
+		}
+	}
 }
 
 void Imp::handleAnimation() {
 
+	//std::cout << this << std::endl;
 	 if (state == ImpStates::TORNADO_ATTACK) {
 
+		sprite.collision_layer = CollisionLayer::FIRE;
 		AssignAnimation(tornado_attack, false);
 	 }
 	 else if (state == ImpStates::TORNADO_RETURN) {
+		 sprite.collision_layer = CollisionLayer::NONE;
 		 AssignAnimation(tornado_return, false);
 	 }
 	else if (state == ImpStates::ATTACK) {
-
 		 AssignAnimation(attack, false);
 	}
 	else if(state==ImpStates::IDLE){
-
-		AssignAnimation(idle, true);
+		 AssignAnimation(idle, true);
 	}
 	
 }
@@ -184,17 +185,18 @@ void Imp::initialiseAnimations() {
 	attack.setFrameSpeed(1/8.f);
 
 
-	tornado_attack.addFrame(sf::IntRect(0, 198, 74, 160));
-	tornado_attack.addFrame(sf::IntRect(74, 198, 74, 160));
-	tornado_attack.addFrame(sf::IntRect(148, 198, 74, 160));
-	tornado_attack.addFrame(sf::IntRect(0, 358, 74, 160));
+	tornado_attack.addFrame(sf::IntRect(0, 198 + 100, 74, 160 - 100)); // no tornado cut top 100 pixels of sprite
+	tornado_attack.addFrame(sf::IntRect(74, 198 + 100, 74, 160 - 100 )); // no tornado cut top 100 pixels of sprite
+	tornado_attack.addFrame(sf::IntRect(148, 198 + 100, 74, 160 - 100)); // no tornado cut top 100 pixels of sprite
+	tornado_attack.addFrame(sf::IntRect(0, 358 + 100, 74, 160 - 100)); // no tornado cut top 100 pixels of sprite
 	tornado_attack.addFrame(sf::IntRect(74, 358, 74, 160));
+	tornado_attack.addFrame(sf::IntRect(148, 358, 74, 160));
 	tornado_attack.setFrameSpeed(1 / 8.f);
 
 
-	tornado_return.addFrame(sf::IntRect(148, 358, 74, 160));
-	tornado_return.addFrame(sf::IntRect(148, 198, 74, 160));
-	tornado_return.addFrame(sf::IntRect(74, 198, 74, 160));
+	tornado_attack.addFrame(sf::IntRect(0, 358 + 100, 74, 160 - 100));
+	tornado_return.addFrame(sf::IntRect(148, 198 + 100, 74, 160 - 100));
+	tornado_return.addFrame(sf::IntRect(74, 198 + 100, 74, 160 - 100));
 	tornado_return.setFrameSpeed(1 / 8.f);
 
 

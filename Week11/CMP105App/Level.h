@@ -11,6 +11,7 @@
 
 #include"EntityManager.h"
 #include"Background.h"
+#include"ImpManager.h"
 #include"Player.h"
 #include"Map.h"
 #include"Imp.h"
@@ -30,9 +31,9 @@ private:
 	// Default variables for level class.
 
 	Player* player;
-	Imp* imp;
 
-	sf::RectangleShape player_box, sword_box;
+	ImpManager imp_manager;
+	sf::RectangleShape sword_box;
 	sf::View view;
 	GameObject wall1 = GameObject();
 	GameObject ground_axis = GameObject();
@@ -43,5 +44,9 @@ private:
 	sf::Texture layer1_texture, layer2_texture, background_texture;
 	Background* background;
 
+
+
+	std::vector<Imp> enemies;
+	sf::Texture imp_texture;
 	 
 };
