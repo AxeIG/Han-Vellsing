@@ -26,24 +26,24 @@ public:
 	void update(float dt) override;
 	void render();
 
-
+	
 private:
 	// Default variables for level class.
+	sf::View view;
+
+	Map map;
+	std::vector<GameObject>* world_map_assets;
 
 	Player* player;
 	Background* background;
-
-	ImpManager imp_manager;
-	sf::RectangleShape sword_box;
-	sf::View view;
-	GameObject wall1 = GameObject();
-	GameObject ground_axis = GameObject();
-	Collision collision;
 	GameObject village_bg;
+	ImpManager imp_manager;
 	sf::Texture village_bg_texture, background_texture;
+	GameObject player_health_bar;
+	GameObject player_health_bar_border;
 
-	sf::Texture imp_texture;
-	 
-	Map map;
-	std::vector<GameObject>* world_map_assets;
+	// used for debug purposes
+	//GameObject wall1 = GameObject();
+	//GameObject ground_axis = GameObject();
+	//sf::RectangleShape sword_box;
 };

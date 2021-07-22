@@ -1,8 +1,10 @@
 #include "Imp.h"
+#include "Framework/AudioManager.h"
 
-#define IMP_WIDTH 16
-#define IMP_HEIGHT 32
+#define IMP_WIDTH 32
+#define IMP_HEIGHT 64
 #define TORNADO_SIZE 160 * scale_factor
+#define IMP_DETECTION_RADIUS 256
 
 Imp::Imp() {
 
@@ -12,7 +14,8 @@ Imp::Imp() {
 	can_attack = false;
 	can_tornado = false;
 
-	detection_radius = 128 * scale_factor;
+	detection_radius = IMP_DETECTION_RADIUS * scale_factor;
+
 
 	setSize(sf::Vector2f(IMP_WIDTH*scale_factor, IMP_HEIGHT*scale_factor));
 	sprite.setSize(getSize());
@@ -77,6 +80,8 @@ void Imp::updateState() {
 		if (can_tornado) {
 		//	std::cout << "WHY DON'T I TORNADO" << std::endl;
 			state = ImpStates::TORNADO_ATTACK;
+			AudioManager::instance->playSoundbyName("flamethrower");
+
 		}
 		else if (can_attack) {
 			state = ImpStates::ATTACK;
@@ -88,6 +93,8 @@ void Imp::updateState() {
 
 		if (can_tornado) {
 			state = ImpStates::TORNADO_ATTACK;
+			AudioManager::instance->playSoundbyName("flamethrower");
+
 		}
 		if (!current_animation->getPlaying()) {
 			state = ImpStates::IDLE;
@@ -144,7 +151,8 @@ void Imp::collisionResponse(GameObject* gameobject) {
 	if (gameobject->collision_layer == CollisionLayer::SWORD) {
 	
 		if (Collision::checkBoundingBox(gameobject, &sprite)) {
-			
+			AudioManager::instance->playSoundbyName("zombie");
+
 			setAlive(false);
 		}
 	}
@@ -179,7 +187,7 @@ void Imp::initialiseAnimations() {
 	idle.addFrame(sf::IntRect(165,  1, 55, 67));
 	idle.addFrame(sf::IntRect(  0, 68, 55, 67));
 	idle.addFrame(sf::IntRect( 55, 68, 55, 67));
-	idle.setFrameSpeed(1/10.f);
+	idle.setFrameSpeed(1/6.f);
 
 	attack.addFrame(sf::IntRect(110,  68, 64, 64));
 	attack.addFrame(sf::IntRect(  0, 135, 64, 64));
@@ -194,13 +202,13 @@ void Imp::initialiseAnimations() {
 	tornado_attack.addFrame(sf::IntRect(0, 358 + 100, 74, 160 - 100)); // no tornado cut top 100 pixels of sprite
 	tornado_attack.addFrame(sf::IntRect(74, 358, 74, 160));
 	tornado_attack.addFrame(sf::IntRect(148, 358, 74, 160));
-	tornado_attack.setFrameSpeed(1 / 8.f);
+	tornado_attack.setFrameSpeed(1 / 6.f);
 
 
 	tornado_attack.addFrame(sf::IntRect(0, 358 + 100, 74, 160 - 100));
 	tornado_return.addFrame(sf::IntRect(148, 198 + 100, 74, 160 - 100));
 	tornado_return.addFrame(sf::IntRect(74, 198 + 100, 74, 160 - 100));
-	tornado_return.setFrameSpeed(1 / 8.f);
+	tornado_return.setFrameSpeed(1 / 6.f);
 
 
 

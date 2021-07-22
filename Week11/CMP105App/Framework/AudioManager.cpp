@@ -1,11 +1,14 @@
 #include "AudioManager.h"
 
+AudioManager* AudioManager::instance;
+
 // Some initial setup of music.
 // All music will loop and have half the normal volume (so background music is quieter).
 AudioManager::AudioManager()
 {
 	music.setLoop(true);
 	music.setVolume(50);
+	instance = this;
 }
 
 AudioManager::~AudioManager()

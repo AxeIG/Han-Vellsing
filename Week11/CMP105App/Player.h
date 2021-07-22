@@ -25,12 +25,18 @@ public:
 
 	void initialisePlayer();
 
+	float getHealthPercent() 
+	{
+		return health / max_health;
+	}
+
 private:
+	float const max_health = 100.f;
 
 	void initialiseAnimations() override;
 
 	// State
-	bool landed, falling, attacking, jump_attacking;
+	bool landed, falling, attacking, jump_attacking, w_hold;
 	
 
 	// Animation

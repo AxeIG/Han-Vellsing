@@ -1,5 +1,5 @@
 #include "FireBallManager.h"
-
+#include "Framework/AudioManager.h"
 
 FireBallManager::FireBallManager() {
 	
@@ -31,12 +31,14 @@ void FireBallManager::spawn(float x, float y, float direction)
 			fireballs[i].setAlive(true);
 			fireballs[i].setVelocity(FireBall::fireball_speed * -direction, 0);
 			fireballs[i].setStartPosition(fireballs[i].getPosition());
-			
+			AudioManager::instance->playSoundbyName("fireball");
+
 			return;
 		}
 	}
 
 	fireballs.push_back(fireball_template);
+	AudioManager::instance->playSoundbyName("fireball");
 
 }
 

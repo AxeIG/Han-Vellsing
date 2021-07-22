@@ -1,6 +1,9 @@
 #include "FireBall.h"
 
+#define FIREBALL_WIDTH 27.f * scale_factor
+#define FIREBALL_HEIGHT 20.f * scale_factor
 const float FireBall::fireball_speed = 3;
+
 FireBall::FireBall(){
 	
 	//set velocity;
@@ -11,7 +14,8 @@ FireBall::FireBall(){
 	animation.addFrame(sf::IntRect(19, 0, 19, 16));
 	animation.addFrame(sf::IntRect(38, 0, 19, 16));
 	animation.setFrameSpeed(1 / 3.f);
-	setSize(sf::Vector2f(50, 50));
+	setSize(sf::Vector2f(FIREBALL_WIDTH, FIREBALL_HEIGHT));
+
 
 	float thirth_width = getSize().x / 3;
 	float thirth_height = getSize().y / 3;

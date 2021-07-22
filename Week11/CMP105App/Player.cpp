@@ -1,7 +1,8 @@
 #include"Player.h"
 #include<iostream>
+#include "Framework/AudioManager.h"
 
-#define SWORD_WIDTH 30 * scale_factor
+#define SWORD_WIDTH 25 * scale_factor
 // Animation definitions
 #define ATTACK_ANIM_WIDTH 96
 #define ANIM_HEIGHT 65
@@ -11,7 +12,7 @@
 #define WALK_WIDTH 66
 
 // Player data
-#define PLAYER_HEIGHT 40
+#define PLAYER_HEIGHT 42
 #define PLAYER_WIDTH 16
 #define MAX_JUMP_HEIGHT 128
 
@@ -41,8 +42,9 @@ void Player::initialisePlayer() {
 	jump_start_position = getPosition();
 	previous_position = getPosition();
 	collision_layer = CollisionLayer::PLAYER;
-	health = 100; //Variable representing the player's health
+	health = max_health; //Variable representing the player's health
 	landed = false;//Landing state
+	w_hold = false;
 	falling = false;
 	attacking = false;
 	jump_attacking = false;
@@ -98,6 +100,8 @@ void Player::updateState() {
 			attacking = false;
 			sword.setCollider(true);
 			state = PlayerStates::ATTACK_RETURN;
+			AudioManager::instance->playSoundbyName("sword");
+
 		}
 	}
 	else if (state == PlayerStates::ATTACK_RETURN) 
@@ -120,6 +124,8 @@ void Player::updateState() {
 	
 		if (attacking) {
 			state = PlayerStates::JUMP_ATTACK;
+			AudioManager::instance->playSoundbyName("sword");
+
 			sword.setCollider(true);
 		}
 		else if (velocity.y >= 0) {
@@ -129,6 +135,8 @@ void Player::updateState() {
 	else if (state == PlayerStates::FALL) {
 	    if (attacking) {
 			state = PlayerStates::JUMP_ATTACK;
+			AudioManager::instance->playSoundbyName("sword");
+
 			sword.setCollider(true);
 		}
 		else if (velocity.y == 0) {
@@ -154,9 +162,6 @@ void Player::updateState() {
 
 void Player::handleInput(float dt) {//Handles Player Inputs by applying force to the character based on the pressed key
 
-	if (input->isKeyDown(sf::Keyboard::K)) {
-		setAlive(false);
-	}
 	if (input->isKeyDown(sf::Keyboard::Enter)) {
 
 			attacking = true;
@@ -173,10 +178,12 @@ void Player::handleInput(float dt) {//Handles Player Inputs by applying force to
 	if (input->isKeyDown(sf::Keyboard::W)){// && (!falling)&&(!attacking)) {
 
 		if (state == PlayerStates::GROUNDED) {
+			w_hold = true;
 			velocity.y = JUMP_FORCE;
 			jump_start_position = getPosition();
 		}
-		else if (abs(jump_start_position.y - getPosition().y) <= MAX_JUMP_HEIGHT) 
+		else if (abs(jump_start_position.y - getPosition().y) <= MAX_JUMP_HEIGHT && w_hold)
+
 		{
 			if (state == PlayerStates::JUMP) {
 				
@@ -185,6 +192,7 @@ void Player::handleInput(float dt) {//Handles Player Inputs by applying force to
 		}
 		
 	}
+	else { w_hold = false; }
 
 	//Managing vertical movement based on key input
 	if (input->isKeyDown(sf::Keyboard::D)) {
@@ -292,8 +300,9 @@ void Player::collisionResponse(GameObject* gameobject) {
 	else if (gameobject->collision_layer == CollisionLayer::FIRE) {
 
 		if (isAlive()) {
-			health -= 0.25;
-			
+			health -= 0.5;
+			AudioManager::instance->playSoundbyName("hit");
+
 			if (health <= 0) {
 				health = 0;
 				setAlive(false);
@@ -304,7 +313,9 @@ void Player::collisionResponse(GameObject* gameobject) {
 	else if (gameobject->collision_layer == CollisionLayer::PROJECTILE) {
 
 		if (isAlive()) {
-			health -= 100;
+			AudioManager::instance->playSoundbyName("hit");
+
+			health -= 15;
 			
 			if (health <= 0) {
 				health = 0;

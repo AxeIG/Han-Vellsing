@@ -22,7 +22,7 @@ public:
 	int  getHealth();
 	
 
-	float scale_factor = 2.f;
+	float scale_factor = 1.f;
 	float health;
 	GameObject sprite;
 	sf::Texture texture;

@@ -14,7 +14,8 @@ class AudioManager
 public:
 	AudioManager();
 	~AudioManager();
-	
+	static AudioManager* instance;
+
 	// Add sound object, provide file path and key string
 	void addSound(std::string filename, std::string lname);
 	// Plays sound based on key string provided (if sound exists).

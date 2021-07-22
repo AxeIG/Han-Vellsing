@@ -26,8 +26,10 @@ public:
 	
  private:
 
-	 float max_range = 500;
+	float max_range = 700;
 	Animation animation;
+	float scale_factor = 1.f;
+
 
 };
 

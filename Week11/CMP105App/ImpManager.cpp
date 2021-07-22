@@ -45,7 +45,7 @@ void ImpManager::update(float dt)
 			imps[i].update(dt);
 			if (imps[i].shouldSpawnFireball()) {
 				
-				fireball_manager.spawn(imps[i].getPosition().x, imps[i].getPosition().y, imps[i].getVelocity().x);
+				fireball_manager.spawn(imps[i].getPosition().x, imps[i].getPosition().y + imps[i].sprite.getSize().y/2, imps[i].getVelocity().x);
 			}
 		}
 	}

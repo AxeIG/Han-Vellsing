@@ -15,14 +15,16 @@ LossMenu::LossMenu(sf::RenderWindow* hwnd, Input* in, GameState* gs, AudioManage
 
 	//Initialise menu buttons
 	restart_button.setSize(sf::Vector2f(200, 40));
-	restart_button.setFillColor(sf::Color::Green);
 	restart_button.setCollider(true);
 	restart_button.setCollisionBox(0, 0, restart_button.getSize().x, restart_button.getSize().y);
+	restart_texture.loadFromFile("gfx/RestartButton.png");
+	restart_button.setTexture(&restart_texture);
 
 	main_menu_button.setSize(sf::Vector2f(200, 40));
-	main_menu_button.setFillColor(sf::Color::Magenta);
 	main_menu_button.setCollider(true);
 	main_menu_button.setCollisionBox(0, 0, main_menu_button.getSize().x, main_menu_button.getSize().y);
+	main_menu_texture.loadFromFile("gfx/MainMenuButton.png");
+	main_menu_button.setTexture(&main_menu_texture);
 }
 
 LossMenu::~LossMenu() {
